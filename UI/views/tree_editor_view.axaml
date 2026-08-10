@@ -1,0 +1,65 @@
+<Window x:Class="Guardian.ProgramStation.UI.Views.TreeEditorWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding WindowTitle}"
+        Width="580"
+        Height="560"
+        MinWidth="480"
+        MinHeight="400"
+        WindowStartupLocation="CenterOwner"
+        FlowDirection="{Binding Direction}">
+  <DockPanel Margin="16">
+    <StackPanel DockPanel.Dock="Bottom"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8"
+                Margin="0,12,0,0">
+      <Button Content="{Binding CancelText}" Click="OnCancel" />
+      <Button Content="{Binding SaveText}" Click="OnSave" />
+    </StackPanel>
+
+    <Grid RowDefinitions="Auto,Auto,*"
+          RowSpacing="10">
+      <Grid ColumnDefinitions="Auto,*"
+            ColumnSpacing="8">
+        <TextBlock Text="{Binding ParentFolderLabel}"
+                   VerticalAlignment="Center" />
+        <TextBox Grid.Column="1"
+                 Text="{Binding TreeName, Mode=TwoWay}" />
+      </Grid>
+
+      <StackPanel Grid.Row="1"
+                  Orientation="Horizontal"
+                  Spacing="8">
+        <Button Content="{Binding AddRootLabel}"
+                Command="{Binding AddRootCommand}"
+                CommandParameter="{Binding $parent[Window]}" />
+        <Button Content="{Binding AddSubfolderLabel}"
+                Command="{Binding AddSubfolderCommand}"
+                CommandParameter="{Binding $parent[Window]}" />
+      </StackPanel>
+
+      <TreeView Grid.Row="2"
+                ItemsSource="{Binding RootNodes}"
+                SelectedItem="{Binding SelectedNode, Mode=TwoWay}">
+        <TreeView.ItemTemplate>
+          <TreeDataTemplate ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Horizontal"
+                        Spacing="8">
+              <TextBox Text="{Binding Name, Mode=TwoWay}"
+                       Width="200"
+                       VerticalContentAlignment="Center" />
+              <Button Content="{Binding AddLabel}"
+                      Click="OnAddChild"
+                      Padding="8,1" />
+              <Button Content="{Binding RemoveLabel}"
+                      Command="{Binding RemoveCommand}"
+                      CommandParameter="{Binding}"
+                      Padding="8,1" />
+            </StackPanel>
+          </TreeDataTemplate>
+        </TreeView.ItemTemplate>
+      </TreeView>
+    </Grid>
+  </DockPanel>
+</Window>

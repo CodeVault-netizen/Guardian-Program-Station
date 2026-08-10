@@ -1,0 +1,22 @@
+<Window x:Class="Guardian.ProgramStation.UI.Views.NameInputWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="380"
+        SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+  <StackPanel Margin="16"
+              Spacing="12">
+    <TextBlock x:Name="PromptText"
+               TextWrapping="Wrap" />
+    <TextBox x:Name="InputBox" />
+    <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8">
+      <Button x:Name="CancelButton"
+              Click="OnCancel" />
+      <Button x:Name="ConfirmButton"
+              Click="OnConfirm" />
+    </StackPanel>
+  </StackPanel>
+</Window>

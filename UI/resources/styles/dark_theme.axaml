@@ -1,0 +1,471 @@
+<Styles x:Class="Guardian.ProgramStation.UI.Themes.DarkTheme"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="using:Avalonia.Controls.Converters">
+
+  <Styles.Resources>
+    <SolidColorBrush x:Key="GpsBackground" Color="#2C2A29" />
+    <SolidColorBrush x:Key="GpsElement" Color="#4B4A48" />
+    <SolidColorBrush x:Key="GpsAdditional" Color="#3A3837" />
+    <SolidColorBrush x:Key="GpsBorder" Color="#7A7B7A" />
+    <SolidColorBrush x:Key="GpsPrimaryText" Color="#A8A8A8" />
+    <SolidColorBrush x:Key="GpsAccentText" Color="#D3D3D3" />
+    <SolidColorBrush x:Key="GpsAccent" Color="#5B9BD5" />
+    <converters:MarginMultiplierConverter x:Key="TreeLevelMargin" Indent="16" Left="True" />
+  </Styles.Resources>
+
+  <Style Selector="Window">
+    <Setter Property="Background" Value="{DynamicResource GpsBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource GpsPrimaryText}" />
+  </Style>
+
+  <Style Selector="UserControl">
+    <Setter Property="Background" Value="{DynamicResource GpsBackground}" />
+  </Style>
+
+  <Style Selector="TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource GpsPrimaryText}" />
+  </Style>
+
+  <Style Selector="Button">
+    <Setter Property="Background" Value="{DynamicResource GpsElement}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource GpsBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Foreground" Value="{DynamicResource GpsPrimaryText}" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Padding" Value="12,6" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_ContentPresenter"
+                          Padding="{TemplateBinding Padding}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="{TemplateBinding CornerRadius}"
+                          Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          TextElement.Foreground="{TemplateBinding Foreground}" />
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="BorderBrush" Value="{DynamicResource GpsAccent}" />
+  </Style>
+
+  <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource GpsAdditional}" />
+  </Style>
+
+  <Style Selector="Button:disabled">
+    <Setter Property="Opacity" Value="0.5" />
+  </Style>
+
+  <Style Selector="RepeatButton.repeat">
+    <Setter Property="Padding" Value="2" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="RepeatButton.repeattrack">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" />
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="TextBox">
+    <Setter Property="CaretBrush" Value="{DynamicResource GpsAccentText}" />
+    <Setter Property="Background" Value="{DynamicResource GpsAdditional}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource GpsBorder}" />
+    <Setter Property="Foreground" Value="{DynamicResource GpsPrimaryText}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="SelectionBrush" Value="{DynamicResource GpsAccent}" />
+    <Setter Property="SelectionForegroundBrush" Value="{DynamicResource GpsPrimaryText}" />
+    <Setter Property="Padding" Value="6,4" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="border"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="{TemplateBinding CornerRadius}">
+          <ScrollViewer Name="PART_ScrollViewer"
+                        Margin="{TemplateBinding Padding}"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto">
+            <TextPresenter Name="PART_TextPresenter"
+                           CaretBrush="{TemplateBinding CaretBrush}"
+                           CaretIndex="{TemplateBinding CaretIndex}"
+                           PasswordChar="{TemplateBinding PasswordChar}"
+                           RevealPassword="{TemplateBinding RevealPassword}"
+                           SelectionBrush="{TemplateBinding SelectionBrush}"
+                           SelectionEnd="{TemplateBinding SelectionEnd}"
+                           SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
+                           SelectionStart="{TemplateBinding SelectionStart}"
+                           Text="{TemplateBinding Text, Mode=TwoWay}"
+                           TextAlignment="{TemplateBinding TextAlignment}"
+                           TextWrapping="{TemplateBinding TextWrapping}" />
+          </ScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="TextBox:focus /template/ Border#border">
+    <Setter Property="BorderBrush" Value="{DynamicResource GpsAccent}" />
+  </Style>
+
+  <Style Selector="TextBox /template/ ScrollViewer">
+    <Setter Property="Cursor" Value="IBeam" />
+  </Style>
+
+  <Style Selector="ListBox">
+    <Setter Property="Background" Value="{DynamicResource GpsAdditional}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource GpsBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="2" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="border"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="{TemplateBinding CornerRadius}">
+          <ScrollViewer Name="PART_ScrollViewer"
+                        Background="{TemplateBinding Background}"
+                        HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                        VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
+            <ItemsPresenter Name="PART_ItemsPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            ItemsPanel="{TemplateBinding ItemsPanel}" />
+          </ScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ListBoxItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Padding" Value="6,4" />
+    <Setter Property="Foreground" Value="{DynamicResource GpsPrimaryText}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_ContentPresenter"
+                          Padding="{TemplateBinding Padding}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                          Background="{TemplateBinding Background}"
+                          Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          CornerRadius="3"
+                          TextElement.Foreground="{TemplateBinding Foreground}" />
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource GpsElement}" />
+  </Style>
+
+  <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource GpsElement}" />
+  </Style>
+
+  <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource GpsAccentText}" />
+  </Style>
+
+  <Style Selector="ScrollViewer">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="*,Auto"
+              RowDefinitions="*,Auto">
+          <ScrollContentPresenter Name="PART_ContentPresenter"
+                                  Padding="{TemplateBinding Padding}"
+                                  Background="{TemplateBinding Background}" />
+          <ScrollBar Name="PART_HorizontalScrollBar"
+                     Grid.Row="1"
+                     Orientation="Horizontal" />
+          <ScrollBar Name="PART_VerticalScrollBar"
+                     Grid.Column="1"
+                     Orientation="Vertical" />
+          <Panel Grid.Row="1"
+                 Grid.Column="1"
+                 Background="{DynamicResource GpsElement}" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ScrollBar">
+    <Setter Property="Cursor" Value="Arrow" />
+  </Style>
+
+  <Style Selector="ScrollBar:horizontal">
+    <Setter Property="Height" Value="14" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{DynamicResource GpsElement}">
+          <Grid ColumnDefinitions="Auto,*,Auto">
+            <RepeatButton Grid.Column="0"
+                          Classes="repeat"
+                          MinWidth="14"
+                          VerticalAlignment="Center"
+                          Focusable="False">
+              <Path Data="M 4 0 L 4 8 L 0 4 Z" Fill="{DynamicResource GpsPrimaryText}" />
+            </RepeatButton>
+            <Track Grid.Column="1"
+                   Maximum="{TemplateBinding Maximum}"
+                   Minimum="{TemplateBinding Minimum}"
+                   Orientation="{TemplateBinding Orientation}"
+                   ViewportSize="{TemplateBinding ViewportSize}"
+                   Value="{TemplateBinding Value, Mode=TwoWay}">
+              <Track.DecreaseButton>
+                <RepeatButton Classes="repeattrack" Focusable="False" />
+              </Track.DecreaseButton>
+              <Track.IncreaseButton>
+                <RepeatButton Classes="repeattrack" Focusable="False" />
+              </Track.IncreaseButton>
+              <Thumb />
+            </Track>
+            <RepeatButton Grid.Column="2"
+                          Classes="repeat"
+                          MinWidth="14"
+                          VerticalAlignment="Center"
+                          Focusable="False">
+              <Path Data="M 0 0 L 4 4 L 0 8 Z" Fill="{DynamicResource GpsPrimaryText}" />
+            </RepeatButton>
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ScrollBar:vertical">
+    <Setter Property="Width" Value="14" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{DynamicResource GpsElement}">
+          <Grid RowDefinitions="Auto,*,Auto">
+            <RepeatButton Grid.Row="0"
+                          Classes="repeat"
+                          MinHeight="14"
+                          HorizontalAlignment="Center"
+                          Focusable="False">
+              <Path Data="M 0 4 L 8 4 L 4 0 Z" Fill="{DynamicResource GpsPrimaryText}" />
+            </RepeatButton>
+            <Track Grid.Row="1"
+                   IsDirectionReversed="True"
+                   Maximum="{TemplateBinding Maximum}"
+                   Minimum="{TemplateBinding Minimum}"
+                   Orientation="{TemplateBinding Orientation}"
+                   ViewportSize="{TemplateBinding ViewportSize}"
+                   Value="{TemplateBinding Value, Mode=TwoWay}">
+              <Track.DecreaseButton>
+                <RepeatButton Classes="repeattrack" Focusable="False" />
+              </Track.DecreaseButton>
+              <Track.IncreaseButton>
+                <RepeatButton Classes="repeattrack" Focusable="False" />
+              </Track.IncreaseButton>
+              <Thumb />
+            </Track>
+            <RepeatButton Grid.Row="2"
+                          Classes="repeat"
+                          MinHeight="14"
+                          HorizontalAlignment="Center"
+                          Focusable="False">
+              <Path Data="M 0 0 L 4 4 L 8 0 Z" Fill="{DynamicResource GpsPrimaryText}" />
+            </RepeatButton>
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ScrollBar Thumb">
+    <Setter Property="Background" Value="{DynamicResource GpsAdditional}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" CornerRadius="3" />
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ScrollBar Thumb:pointerover">
+    <Setter Property="Background" Value="{DynamicResource GpsBorder}" />
+  </Style>
+
+  <Style Selector="ScrollBar:horizontal Thumb">
+    <Setter Property="MinWidth" Value="14" />
+    <Setter Property="Height" Value="12" />
+  </Style>
+
+  <Style Selector="ScrollBar:vertical Thumb">
+    <Setter Property="MinHeight" Value="14" />
+    <Setter Property="Width" Value="12" />
+  </Style>
+
+  <Style Selector="TreeView">
+    <Setter Property="Background" Value="{DynamicResource GpsAdditional}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource GpsBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="{TemplateBinding CornerRadius}">
+          <ScrollViewer Name="PART_ScrollViewer"
+                        Background="{TemplateBinding Background}"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto">
+            <ItemsPresenter Name="PART_ItemsPresenter"
+                            ItemsPanel="{TemplateBinding ItemsPanel}" />
+          </ScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="TreeViewItem">
+    <Setter Property="Padding" Value="2" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel>
+          <Border Name="SelectionBorder"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="3"
+                  Focusable="True"
+                  TemplatedControl.IsTemplateFocusTarget="True">
+            <Grid Name="PART_Header"
+                  Margin="{TemplateBinding Level, Mode=OneWay, Converter={StaticResource TreeLevelMargin}}"
+                  ColumnDefinitions="16,*">
+              <ToggleButton Name="PART_ExpandCollapseChevron"
+                            Focusable="False"
+                            IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}" />
+              <ContentPresenter Name="PART_HeaderPresenter"
+                                Grid.Column="1"
+                                Padding="{TemplateBinding Padding}"
+                                Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                Focusable="False" />
+            </Grid>
+          </Border>
+          <ItemsPresenter Name="PART_ItemsPresenter"
+                          IsVisible="{TemplateBinding IsExpanded}"
+                          ItemsPanel="{TemplateBinding ItemsPanel}" />
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="TreeViewItem /template/ ToggleButton#PART_ExpandCollapseChevron">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Width="14"
+                Height="12"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="Transparent">
+          <Path HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Data="M 0 2 L 4 6 L 0 10 Z"
+                Fill="{DynamicResource GpsPrimaryText}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="TreeViewItem /template/ ToggleButton#PART_ExpandCollapseChevron:checked">
+    <Setter Property="RenderTransform">
+      <RotateTransform Angle="45" />
+    </Setter>
+  </Style>
+
+  <Style Selector="TreeViewItem:empty /template/ ToggleButton#PART_ExpandCollapseChevron">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="TreeViewItem:selected /template/ Border#SelectionBorder">
+    <Setter Property="Background" Value="{DynamicResource GpsElement}" />
+  </Style>
+
+  <Style Selector="CheckBox">
+    <Setter Property="Foreground" Value="{DynamicResource GpsPrimaryText}" />
+    <Setter Property="Background" Value="{DynamicResource GpsAdditional}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource GpsBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="4,0,0,0" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="Auto,*">
+          <Border Name="border"
+                  Width="18"
+                  Height="18"
+                  VerticalAlignment="Center"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="3">
+            <Panel>
+              <Path Name="checkMark"
+                    Width="11"
+                    Height="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="M 1145.607177734375,430 C1145.607177734375,430 1141.449951171875,435.0772705078125 1141.449951171875,435.0772705078125 1141.449951171875,435.0772705078125 1139.232177734375,433.0999755859375 1139.232177734375,433.0999755859375 1139.232177734375,433.0999755859375 1138,434.5538330078125 1138,434.5538330078125 1138,434.5538330078125 1141.482177734375,438 1141.482177734375,438 1141.482177734375,438 1141.96875,437.9375 1141.96875,437.9375 1141.96875,437.9375 1147,431.34619140625 1147,431.34619140625 1147,431.34619140625 1145.607177734375,430 1145.607177734375,430 z"
+                    Fill="{DynamicResource GpsAccentText}"
+                    Stretch="Uniform" />
+              <Rectangle Name="indeterminateMark"
+                         Width="10"
+                         Height="10"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Fill="{DynamicResource GpsAccentText}" />
+            </Panel>
+          </Border>
+          <ContentPresenter Name="PART_ContentPresenter"
+                            Grid.Column="1"
+                            Margin="{TemplateBinding Padding}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            TextElement.Foreground="{TemplateBinding Foreground}" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="CheckBox /template/ Path#checkMark">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="CheckBox /template/ Rectangle#indeterminateMark">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="CheckBox:checked /template/ Path#checkMark">
+    <Setter Property="IsVisible" Value="True" />
+  </Style>
+
+  <Style Selector="CheckBox:indeterminate /template/ Rectangle#indeterminateMark">
+    <Setter Property="IsVisible" Value="True" />
+  </Style>
+
+</Styles>

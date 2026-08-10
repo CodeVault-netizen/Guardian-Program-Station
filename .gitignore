@@ -1,0 +1,46 @@
+# Build results
+bin/
+obj/
+artifacts/
+*.nupkg
+
+# IDE
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+
+# Publish outputs
+publish/
+*.publish.xml
+
+# NuGet
+*.nupkg
+packages/
+!**/packages/build/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# Crash reports
+crash.log

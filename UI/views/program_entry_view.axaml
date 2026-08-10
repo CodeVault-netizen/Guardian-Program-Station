@@ -1,0 +1,68 @@
+<Window x:Class="Guardian.ProgramStation.UI.Views.ProgramEntryWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding Title}"
+        Width="520"
+        Height="440"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        FlowDirection="{Binding Direction}">
+  <Grid Margin="20"
+        ColumnDefinitions="100,*"
+        RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto"
+        ColumnSpacing="10"
+        RowSpacing="10">
+    <TextBlock Grid.Row="0"
+               Grid.Column="0"
+               Text="{Binding NameLabel}"
+               VerticalAlignment="Center" />
+    <TextBox Grid.Row="0"
+             Grid.Column="1"
+             Text="{Binding Name, Mode=TwoWay}" />
+
+    <TextBlock Grid.Row="1"
+               Grid.Column="0"
+               Text="{Binding VersionLabel}"
+               VerticalAlignment="Center" />
+    <TextBox Grid.Row="1"
+             Grid.Column="1"
+             Text="{Binding Version, Mode=TwoWay}" />
+
+    <TextBlock Grid.Row="2"
+               Grid.Column="0"
+               Text="{Binding LinkLabel}"
+               VerticalAlignment="Center" />
+    <TextBox Grid.Row="2"
+             Grid.Column="1"
+             Text="{Binding Link, Mode=TwoWay}" />
+
+    <TextBlock Grid.Row="3"
+               Grid.Column="0"
+               Text="{Binding LicenseLabel}"
+               VerticalAlignment="Center" />
+    <TextBox Grid.Row="3"
+             Grid.Column="1"
+             Text="{Binding License, Mode=TwoWay}" />
+
+    <TextBlock Grid.Row="4"
+               Grid.Column="0"
+               Text="{Binding NotesLabel}"
+               VerticalAlignment="Top"
+               Margin="0,6,0,0" />
+    <TextBox Grid.Row="4"
+             Grid.Column="1"
+             Text="{Binding Notes, Mode=TwoWay}"
+             TextWrapping="Wrap"
+             AcceptsReturn="True"
+             VerticalContentAlignment="Top" />
+
+    <StackPanel Grid.Row="6"
+                Grid.ColumnSpan="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8">
+      <Button Content="{Binding SaveText}" Click="OnSave" />
+      <Button Content="{Binding CancelText}" Click="OnCancel" />
+    </StackPanel>
+  </Grid>
+</Window>

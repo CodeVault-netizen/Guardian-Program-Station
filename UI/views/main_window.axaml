@@ -1,0 +1,88 @@
+<Window x:Class="Guardian.ProgramStation.UI.Views.MainWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding AppTitle}"
+        Width="1100"
+        Height="720"
+        MinWidth="860"
+        MinHeight="560"
+        WindowStartupLocation="CenterScreen"
+        FlowDirection="{Binding Direction}">
+
+  <Grid ColumnDefinitions="220,*">
+    <Grid Grid.Column="0"
+          Background="{DynamicResource GpsElement}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <TextBlock Text="{Binding AppTitle}"
+                 Margin="16,20,16,12"
+                 FontSize="18"
+                 FontWeight="Bold"
+                 Foreground="{DynamicResource GpsAccentText}"
+                 TextWrapping="Wrap" />
+
+      <StackPanel Grid.Row="1"
+                  Spacing="4"
+                  Margin="8,0,8,0">
+        <Button Content="{Binding DashboardLabel}"
+                Command="{Binding ShowDashboardCommand}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left" />
+        <Button Content="{Binding Reports}"
+                Command="{Binding ShowReportCommand}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left" />
+        <Button Content="{Binding Trees}"
+                Command="{Binding ShowTreesCommand}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left" />
+        <Button Content="{Binding SettingsLabel}"
+                Command="{Binding ShowSettingsCommand}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left" />
+      </StackPanel>
+
+      <StackPanel Grid.Row="2"
+                  Spacing="8"
+                  Margin="8,0,8,16">
+        <Button Content="{Binding LanguageButtonText}"
+                Command="{Binding SwitchLanguageCommand}" />
+        <Button Content="{Binding IndexNow}"
+                Command="{Binding IndexNowCommand}" />
+      </StackPanel>
+    </Grid>
+
+    <Grid Grid.Column="1"
+          RowDefinitions="Auto,*">
+      <Grid Grid.Row="0"
+            ColumnDefinitions="*,Auto"
+            Margin="16,12,16,8">
+        <TextBlock Text="{Binding AppTitle}"
+                   FontSize="16"
+                   FontWeight="Bold"
+                   VerticalAlignment="Center" />
+        <TextBlock Grid.Column="1"
+                   Text="{Binding StatusMessage}"
+                   VerticalAlignment="Center"
+                   Margin="16,0,0,0"
+                   Opacity="0.8"
+                   TextTrimming="CharacterEllipsis" />
+      </Grid>
+
+      <Grid Grid.Row="1">
+        <ContentControl x:Name="DashboardHost"
+                        IsVisible="{Binding IsDashboardVisible}" />
+        <ContentControl x:Name="ReportHost"
+                        IsVisible="{Binding IsReportVisible}" />
+        <ContentControl x:Name="TreeHost"
+                        IsVisible="{Binding IsTreesVisible}" />
+        <ContentControl x:Name="SettingsHost"
+                        IsVisible="{Binding IsSettingsVisible}" />
+      </Grid>
+    </Grid>
+  </Grid>
+</Window>
