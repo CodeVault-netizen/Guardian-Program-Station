@@ -1,0 +1,31 @@
+{
+  "Id": "utf8-tree",
+  "Name": "UnicodeTest",
+  "Nodes": [
+    {
+      "Name": "اختبار عربي",
+      "NodeType": "folder",
+      "CreatedAt": "2026-01-01T00:00:00Z",
+      "Children": []
+    },
+    {
+      "Name": "测试",
+      "NodeType": "folder",
+      "CreatedAt": "2026-01-02T00:00:00Z",
+      "Children": []
+    },
+    {
+      "Name": "テスト",
+      "NodeType": "folder",
+      "CreatedAt": "2026-01-03T00:00:00Z",
+      "Children": [
+        {
+          "Name": "サブ",
+          "NodeType": "folder",
+          "CreatedAt": "2026-01-04T00:00:00Z",
+          "Children": []
+        }
+      ]
+    }
+  ]
+}

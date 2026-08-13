@@ -1,0 +1,19 @@
+{
+  "Id": "file-node-tree",
+  "Name": "FileTest",
+  "Nodes": [
+    {
+      "Name": "Docs",
+      "NodeType": "folder",
+      "CreatedAt": "2026-01-01T00:00:00Z",
+      "Children": [
+        {
+          "Name": "readme.txt",
+          "NodeType": "file",
+          "CreatedAt": "2026-01-02T00:00:00Z",
+          "Children": []
+        }
+      ]
+    }
+  ]
+}

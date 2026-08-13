@@ -1,0 +1,38 @@
+{
+  "Id": "cli-test-1",
+  "Name": "CliTest",
+  "Nodes": [
+    {
+      "Name": "Project",
+      "NodeType": "folder",
+      "CreatedAt": "2026-01-01T00:00:00Z",
+      "Children": [
+        {
+          "Name": "Source",
+          "NodeType": "folder",
+          "CreatedAt": "2026-01-02T00:00:00Z",
+          "Children": [
+            {
+              "Name": "Core",
+              "NodeType": "folder",
+              "CreatedAt": "2026-01-03T00:00:00Z",
+              "Children": []
+            },
+            {
+              "Name": "UI",
+              "NodeType": "folder",
+              "CreatedAt": "2026-01-04T00:00:00Z",
+              "Children": []
+            }
+          ]
+        },
+        {
+          "Name": "Tests",
+          "NodeType": "folder",
+          "CreatedAt": "2026-01-05T00:00:00Z",
+          "Children": []
+        }
+      ]
+    }
+  ]
+}

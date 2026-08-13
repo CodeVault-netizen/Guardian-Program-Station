@@ -1,0 +1,66 @@
+name: Cross-Platform CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-test-cli:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Report every OS even when one fails, so a single platform problem
+      # does not hide the results of the others.
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK (net10.0)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore GuardianProgramStation.sln
+
+      - name: Build (Release, whole solution)
+        run: dotnet build GuardianProgramStation.sln --no-restore --configuration Release
+
+      - name: Run all tests
+        run: dotnet test GuardianProgramStation.sln --no-build --configuration Release --logger "trx;LogFileName=test-results.trx" --results-directory TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}
+          path: TestResults/*.trx
+          if-no-files-found: warn
+
+      - name: Locate CLI binary
+        id: cli
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            echo "cli=./Cli/bin/Release/net10.0/guardian-program-station.exe" >> "$GITHUB_OUTPUT"
+          else
+            echo "cli=./Cli/bin/Release/net10.0/guardian-program-station" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Functional CLI verification (help/version/create/preview/validate/template + exit codes + UTF-8 + filesystem)
+        shell: bash
+        run: bash ci/verify-cli.sh "${{ steps.cli.outputs.cli }}"
+
+      - name: Upload CLI verification log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli-verify-log-${{ matrix.os }}
+          path: cli-verify.log
+          if-no-files-found: warn

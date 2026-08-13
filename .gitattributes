@@ -1,0 +1,6 @@
+# Shell scripts must always be checked out with LF line endings:
+# CRLF breaks bash on Linux and macOS CI runners.
+*.sh text eol=lf
+
+# CI test data: keep LF for byte-exact UTF-8 handling on every platform.
+ci/test-trees/*.json text eol=lf
