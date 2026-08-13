@@ -16,6 +16,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: macos-latest
+            rid: osx-x64
 
     steps:
       - name: Checkout
@@ -64,3 +71,40 @@ jobs:
           name: cli-verify-log-${{ matrix.os }}
           path: cli-verify.log
           if-no-files-found: warn
+
+      # Framework-dependent publish (requires the .NET runtime, but not an SDK)
+      # built from the same commit that just passed Build + Tests + CLI
+      # verification. Packaging strategy (self-contained vs framework-dependent)
+      # is intentionally left for a later release decision.
+      - name: Publish CLI (${{ matrix.rid }})
+        shell: bash
+        run: |
+          dotnet publish Cli/Cli.csproj \
+            --configuration Release \
+            --runtime ${{ matrix.rid }} \
+            --self-contained false \
+            --output "publish/${{ matrix.rid }}"
+
+      - name: Verify published CLI (${{ matrix.rid }})
+        shell: bash
+        run: |
+          BIN="publish/${{ matrix.rid }}/guardian-program-station"
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            BIN="$BIN.exe"
+          fi
+          if [ ! -f "$BIN" ]; then
+            echo "FAIL: published binary not found: $BIN"
+            exit 1
+          fi
+          echo "Binary exists: $BIN"
+          echo "--- --version ---"
+          "$BIN" --version
+          echo "--- --help ---"
+          "$BIN" --help | head -8
+
+      - name: Upload CLI artifact (${{ matrix.rid }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: guardian-program-station-${{ matrix.rid }}
+          path: publish/${{ matrix.rid }}/**
+          if-no-files-found: error
