@@ -138,6 +138,29 @@ macOS:   Tested ✅ (Build/Tests/CLI كلها PASS على macos-latest)
 
 Commit: `cc5c0a6` — "Add cross-platform CI workflow that verifies the CLI on Windows, Linux and macOS"
 
+### Artifacts CLI القابلة للتنزيل (Run #31705677567 — SUCCESS ✅)
+كل Artifact مبني من نفس الـ commit الذي نجحت عليه الاختبارات، ويتم تشغيل
+`--version` و `--help` عليه على الرنر قبل الرفع (`--self-contained false` =
+يتطلب .NET runtime وليس SDK؛ قرار التعبئة النهائي مؤجل):
+
+| Artifact | RID | الحجم | مُتحقق على الرنر (`--version`/`--help`) |
+|---|---|---|---|
+| `guardian-program-station-win-x64` | win-x64 | 454 KB | ✅ PASS |
+| `guardian-program-station-linux-x64` | linux-x64 | 414 KB | ✅ PASS |
+| `guardian-program-station-osx-arm64` | osx-arm64 | 412 KB | ✅ PASS |
+
+> اكتشاف حقيقي: رنر `macos-latest` هو ARM64 (Apple Silicon)، لذا `osx-x64` لا
+> يمكن تشغيله عليه (لا يوجد x64 runtime) — الـ RID يُحسب الآن من
+> `RUNNER_OS`+`RUNNER_ARCH` في الـ Workflow (`win-x64` / `linux-x64` /
+> `osx-arm64`) ليُبنى ويُتحقق من كل Artifact على الرنر الخاص به.
+
+NuGet: كل الحزم السبعة مثبتة بإصدارات exact (System.CommandLine
+`2.0.0-beta5.25277.114`، DI `10.0.0`، Test.Sdk `17.11.1`، xunit `2.9.2`،
+runner `2.8.2`، Avalonia `11.3.19`) — بدون ترقيات ولا downgrades ولا
+تعارضات.
+
+README.md: شارة Cross-Platform CI مضافة في الأعلى.
+
 ---
 
 ## ✅ الإصلاحات السابقة (ملخّص)
