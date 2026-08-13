@@ -24,6 +24,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<CreateTreeUseCase>();
         services.AddSingleton<ImportTreeUseCase>();
         services.AddSingleton<ExportReportUseCase>();
+        services.AddSingleton<PreviewTreeUseCase>();
+        services.AddSingleton<ValidateTreeUseCase>();
 
         services.AddSingleton<IndexingScheduler>();
 

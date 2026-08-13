@@ -401,6 +401,10 @@
     <Setter Property="IsVisible" Value="False" />
   </Style>
 
+  <Style Selector="TreeViewItem:pointerover /template/ Border#SelectionBorder">
+    <Setter Property="Background" Value="{DynamicResource GpsAdditional}" />
+  </Style>
+
   <Style Selector="TreeViewItem:selected /template/ Border#SelectionBorder">
     <Setter Property="Background" Value="{DynamicResource GpsElement}" />
   </Style>

@@ -27,6 +27,7 @@ public sealed class FullReportViewModel : ObservableObject
         _localization = localization;
         _export = services.GetRequiredService<ExportReportUseCase>();
 
+        CloseReportsCommand = new RelayCommand(_ => CloseRequested?.Invoke());
         AddProgramCommand = new RelayCommand(_ => EditRequested?.Invoke(null));
         EditProgramCommand = new RelayCommand(_ => EditRequested?.Invoke(_selectedProgram is null ? null : ToDto(_selectedProgram)), _ => _selectedProgram is not null);
         DeleteProgramCommand = new AsyncRelayCommand(async _ =>
@@ -61,9 +62,20 @@ public sealed class FullReportViewModel : ObservableObject
 
     public event Action<ProgramEntryDto?>? EditRequested;
 
+    /// <summary>Raised when the user closes the reports page.</summary>
+    public event Action? CloseRequested;
+
+    public ObservableCollection<ProgramGroupViewModel> Groups { get; } = new();
+
+    /// <summary>Flat, observable list of every program (what the ListBox binds to).</summary>
     public ObservableCollection<ProgramModel> Programs { get; } = new();
 
+    /// <summary>Visible diagnostics: number of groups currently bound.</summary>
+    public int GroupsCount => Groups.Count;
+
     public IStorageService Storage => _storage;
+
+    public ICommand CloseReportsCommand { get; }
 
     public ICommand AddProgramCommand { get; }
 
@@ -128,6 +140,8 @@ public sealed class FullReportViewModel : ObservableObject
 
     public string ExportJsonLabel => _localization["ExportJson"];
 
+    public string CloseLabel => _localization["Close"];
+
     public string AllLabel => _localization["All"];
 
     public string WindowsLabel => _localization["Windows"];
@@ -144,6 +158,7 @@ public sealed class FullReportViewModel : ObservableObject
     {
         _all = (await _storage.LoadProgramsAsync()).ToList();
         ApplyFilter();
+        Console.WriteLine($"[Reports] Loaded {_all.Count} programs, Groups count: {Groups.Count}");
     }
 
     public async Task SaveAsync(ProgramEntryDto dto)
@@ -210,11 +225,25 @@ public sealed class FullReportViewModel : ObservableObject
             ? filtered.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
             : filtered.OrderByDescending(p => p.Name, StringComparer.OrdinalIgnoreCase);
 
+        Groups.Clear();
         Programs.Clear();
-        foreach (var program in filtered)
+        foreach (var group in filtered
+                     .GroupBy(p => p.ParentSection, StringComparer.OrdinalIgnoreCase)
+                     .OrderBy(g => g.Key, StringComparer.OrdinalIgnoreCase))
         {
-            Programs.Add(program);
+            var viewModel = new ProgramGroupViewModel(group.Key);
+            var index = 0;
+            foreach (var program in group)
+            {
+                program.IsAlternate = index++ % 2 == 1;
+                viewModel.Programs.Add(program);
+                Programs.Add(program);
+            }
+
+            Groups.Add(viewModel);
         }
+
+        OnPropertyChanged(nameof(GroupsCount));
     }
 
     private static ProgramEntryDto ToDto(ProgramModel program) => new()

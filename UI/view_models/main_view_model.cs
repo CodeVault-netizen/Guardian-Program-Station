@@ -1,9 +1,12 @@
 using System.Windows.Input;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Guardian.ProgramStation.Application.Dtos;
 using Guardian.ProgramStation.Application.Interfaces;
 using Guardian.ProgramStation.Application.UseCases;
 using Guardian.ProgramStation.Infrastructure.Scheduling;
+using Guardian.ProgramStation.UI.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Guardian.ProgramStation.UI.ViewModels;
@@ -14,7 +17,7 @@ public sealed class MainViewModel : ObservableObject
     private readonly ISettingsService _settingsService;
     private readonly IIndexingService _indexingService;
     private readonly IStorageService _storageService;
-    private string _currentPage = "dashboard";
+    private string _currentPage = "trees";
     private string _statusMessage = string.Empty;
 
     public MainViewModel(IServiceProvider services, ILocalizationService localization)
@@ -42,7 +45,18 @@ public sealed class MainViewModel : ObservableObject
         ShowDashboardCommand = new RelayCommand(_ => SetPage("dashboard"));
         ShowReportCommand = new RelayCommand(_ => SetPage("report"));
         ShowTreesCommand = new RelayCommand(_ => SetPage("trees"));
-        ShowSettingsCommand = new RelayCommand(_ => SetPage("settings"));
+        CloseReportsCommand = new RelayCommand(_ => SetPage("trees"));
+        ShowSettingsCommand = new AsyncRelayCommand(async owner => await ShowSettingsAsync(owner));
+        ExitCommand = new RelayCommand(_ =>
+        {
+            // Close the main window so the unsaved-changes prompt can run;
+            // Shutdown() would bypass the Closing event.
+            if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } window })
+            {
+                window.Close();
+            }
+        });
+        ToggleThemeCommand = new RelayCommand(_ => ToggleTheme());
 
         _localization.LanguageChanged += (_, _) => RefreshLocalized();
     }
@@ -65,9 +79,39 @@ public sealed class MainViewModel : ObservableObject
 
     public ICommand ShowTreesCommand { get; }
 
+    public ICommand CloseReportsCommand { get; }
+
     public ICommand ShowSettingsCommand { get; }
 
+    public ICommand ExitCommand { get; }
+
+    public ICommand ToggleThemeCommand { get; }
+
     public string AppTitle => _localization["AppTitle"];
+
+    public string FileMenuLabel => _localization["File"];
+
+    public string EditMenuLabel => _localization["Edit"];
+
+    public string ViewMenuLabel => _localization["View"];
+
+    public string TextMenuLabel => _localization["Text"];
+
+    public string ToolsMenuLabel => _localization["Tools"];
+
+    public string HelpMenuLabel => _localization["Help"];
+
+    public string UndoLabel => _localization["Undo"];
+
+    public string RedoLabel => _localization["Redo"];
+
+    public string ExitLabel => _localization["Exit"];
+
+    public string ToggleThemeLabel => _localization["ToggleTheme"];
+
+    public string TextOptionsLabel => _localization["TextOptions"];
+
+    public string AboutLabel => _localization["About"];
 
     public string DashboardLabel => _localization["Dashboard"];
 
@@ -92,8 +136,6 @@ public sealed class MainViewModel : ObservableObject
     public bool IsReportVisible => _currentPage == "report";
 
     public bool IsTreesVisible => _currentPage == "trees";
-
-    public bool IsSettingsVisible => _currentPage == "settings";
 
     public string StatusMessage
     {
@@ -146,12 +188,42 @@ public sealed class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(IsDashboardVisible));
         OnPropertyChanged(nameof(IsReportVisible));
         OnPropertyChanged(nameof(IsTreesVisible));
-        OnPropertyChanged(nameof(IsSettingsVisible));
+    }
+
+    private async Task ShowSettingsAsync(object? owner)
+    {
+        if (owner is not Window window)
+        {
+            return;
+        }
+
+        var dialog = new SettingsWindow(Settings);
+        await dialog.ShowDialog(window);
+    }
+
+    private void ToggleTheme()
+    {
+        var current = Settings.SelectedTheme?.Id ?? "dark";
+        var target = current == "light" ? "dark" : "light";
+        Settings.SelectedTheme = Settings.AvailableThemes.FirstOrDefault(t => t.Id == target)
+                                ?? Settings.AvailableThemes.FirstOrDefault();
     }
 
     private void RefreshLocalized()
     {
         OnPropertyChanged(nameof(AppTitle));
+        OnPropertyChanged(nameof(FileMenuLabel));
+        OnPropertyChanged(nameof(EditMenuLabel));
+        OnPropertyChanged(nameof(ViewMenuLabel));
+        OnPropertyChanged(nameof(TextMenuLabel));
+        OnPropertyChanged(nameof(ToolsMenuLabel));
+        OnPropertyChanged(nameof(HelpMenuLabel));
+        OnPropertyChanged(nameof(UndoLabel));
+        OnPropertyChanged(nameof(RedoLabel));
+        OnPropertyChanged(nameof(ExitLabel));
+        OnPropertyChanged(nameof(ToggleThemeLabel));
+        OnPropertyChanged(nameof(TextOptionsLabel));
+        OnPropertyChanged(nameof(AboutLabel));
         OnPropertyChanged(nameof(DashboardLabel));
         OnPropertyChanged(nameof(Reports));
         OnPropertyChanged(nameof(Trees));

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Guardian.ProgramStation.Application.Dtos;
 using Guardian.ProgramStation.Application.Interfaces;
@@ -81,6 +82,10 @@ public sealed class SettingsViewModel : ObservableObject
     public string PrimaryTextLabel => _localization["PrimaryText"];
 
     public string AccentTextLabel => _localization["AccentText"];
+
+    public string SaveSettingsLabel => _localization["SaveSettings"];
+
+    public FlowDirection Direction => _localization.IsRtl ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 
     public ICommand AddFolderCommand { get; }
 
@@ -197,6 +202,21 @@ public sealed class SettingsViewModel : ObservableObject
     {
         get => _customAccentText;
         set => SetProperty(ref _customAccentText, value);
+    }
+
+    /// <summary>
+    /// Persists the current in-memory settings to storage. Used by the dialog's
+    /// "Save Settings" button before the window closes.
+    /// </summary>
+    public async Task SaveAsync()
+    {
+        var settings = await _settingsService.LoadAsync();
+        settings.ThemeId = SelectedTheme?.Id ?? "dark";
+        settings.Language = _localization.CurrentLanguage;
+        settings.AutoIndexEnabled = AutoIndexEnabled;
+        settings.ScheduleInterval = _scheduleInterval;
+        settings.FavoriteFolders = FavoriteFolders.ToList();
+        await _settingsService.SaveAsync(settings);
     }
 
     public async Task LoadAsync()
@@ -324,6 +344,8 @@ public sealed class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(BorderLabel));
         OnPropertyChanged(nameof(PrimaryTextLabel));
         OnPropertyChanged(nameof(AccentTextLabel));
+        OnPropertyChanged(nameof(SaveSettingsLabel));
+        OnPropertyChanged(nameof(Direction));
     }
 
     private void Persist(Action<SettingsModel> update)

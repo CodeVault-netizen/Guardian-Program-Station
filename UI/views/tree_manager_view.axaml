@@ -1,53 +1,140 @@
 <UserControl x:Class="Guardian.ProgramStation.UI.Views.TreeManagerView"
              xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <Grid ColumnDefinitions="240,*"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             KeyDown="OnTreeManagerKeyDown">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.is-root">
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Foreground" Value="{DynamicResource GpsAccentText}" />
+    </Style>
+    <Style Selector="TextBox.is-root">
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Foreground" Value="{DynamicResource GpsAccentText}" />
+    </Style>
+    <Style Selector="Path.is-root">
+      <Setter Property="Fill" Value="{DynamicResource GpsAccent}" />
+    </Style>
+    <Style Selector="Button.node-type">
+      <Setter Property="Padding" Value="12,4" />
+    </Style>
+    <Style Selector="Button.node-type.active">
+      <Setter Property="BorderBrush" Value="{DynamicResource GpsAccent}" />
+      <Setter Property="Foreground" Value="{DynamicResource GpsAccentText}" />
+    </Style>
+    <Style Selector="Button.node-add">
+      <Setter Property="BorderBrush" Value="{DynamicResource GpsAccent}" />
+      <Setter Property="Foreground" Value="{DynamicResource GpsAccentText}" />
+    </Style>
+    <Style Selector="Button.hover-action">
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Padding" Value="6,3" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="CornerRadius" Value="4" />
+    </Style>
+    <Style Selector="TreeViewItem:pointerover Button.hover-action">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="Button.hover-action:pointerover">
+      <Setter Property="Background" Value="{DynamicResource GpsBorder}" />
+    </Style>
+    <Style Selector="Button.panel-control">
+      <Setter Property="Width" Value="26" />
+      <Setter Property="Height" Value="24" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="Foreground" Value="{DynamicResource GpsPrimaryText}" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.panel-control:pointerover">
+      <Setter Property="Background" Value="{DynamicResource GpsAccent}" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.panel-control.panel-close:pointerover">
+      <Setter Property="Background" Value="#E0564F" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.panel-restore">
+      <Setter Property="Padding" Value="12,4" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+  </UserControl.Styles>
+
+  <Panel>
+  <Grid ColumnDefinitions="2*,3*"
         Margin="16">
     <Grid Grid.Column="0"
-          RowDefinitions="Auto,*,Auto">
-      <TextBlock Text="{Binding SavedTreesLabel}"
+          RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
+      <TextBlock Grid.Row="0"
+                 Text="{Binding SavedTreesLabel}"
                  FontWeight="Bold"
-                 Margin="0,0,0,8" />
-
+                 Margin="0,0,0,6" />
       <ListBox Grid.Row="1"
                ItemsSource="{Binding SavedTrees}"
-               SelectedItem="{Binding SelectedTree, Mode=TwoWay}">
+               SelectedItem="{Binding SelectedTree, Mode=TwoWay}"
+               SelectionChanged="OnTreeSelectionChanged"
+               MaxHeight="150"
+               Margin="0,0,0,10">
         <ListBox.ItemTemplate>
           <DataTemplate>
-            <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0"
-                         Text="{Binding Name}"
-                         TextTrimming="CharacterEllipsis"
-                         VerticalAlignment="Center" />
-              <Button Grid.Column="1"
-                      Content="{Binding $parent[ListBox].DataContext.DeleteTreeLabel}"
-                      Click="OnDeleteTree"
-                      Padding="8,2" />
-            </Grid>
+            <TextBlock Text="{Binding Name}"
+                       TextTrimming="CharacterEllipsis"
+                       Padding="4,2" />
           </DataTemplate>
         </ListBox.ItemTemplate>
       </ListBox>
 
-      <StackPanel Grid.Row="2"
-                  Orientation="Horizontal"
-                  Spacing="8"
-                  Margin="0,8,0,0">
-        <Button Content="{Binding NewLabel}"
-                Command="{Binding NewTreeCommand}"
-                CommandParameter="{Binding $parent[Window]}" />
-        <Button Content="{Binding OpenLabel}" Command="{Binding OpenTreeCommand}" />
-        <Button Content="{Binding ImportFromPathLabel}"
-                Command="{Binding ImportFromPathCommand}"
-                CommandParameter="{Binding $parent[Window]}" />
-      </StackPanel>
-    </Grid>
+      <Border Grid.Row="2"
+              Background="{DynamicResource GpsAdditional}"
+              BorderBrush="{DynamicResource GpsBorder}"
+              BorderThickness="1"
+              CornerRadius="6"
+              Padding="8,4"
+              Margin="0,0,0,10">
+        <Grid ColumnDefinitions="*,Auto"
+              RowDefinitions="Auto,Auto">
+          <StackPanel Grid.Row="0"
+                      Grid.Column="0"
+                      Orientation="Horizontal"
+                      Spacing="6">
+            <TextBlock Text="{Binding EditingLabel}"
+                       FontWeight="Bold" />
+            <TextBlock Text="{Binding TreeName}"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource GpsAccentText}"
+                       TextTrimming="CharacterEllipsis" />
+          </StackPanel>
+          <Button Grid.Row="0"
+                  Grid.Column="1"
+                  Content="✕"
+                  ToolTip.Tip="{Binding CloseLabel}"
+                  Command="{Binding CloseTreeCommand}"
+                  Classes="panel-control panel-close" />
 
-    <Grid Grid.Column="1"
-          RowDefinitions="Auto,Auto,*,Auto"
-          Margin="16,0,0,0">
-      <Grid Grid.Row="0"
+          <StackPanel Grid.Row="1"
+                      Grid.Column="0"
+                      Orientation="Horizontal"
+                      Spacing="4"
+                      Margin="0,2,0,0"
+                      IsVisible="{Binding HasSavePath}">
+            <TextBlock Text="{Binding SavePathLabel}"
+                       FontSize="11"
+                       Opacity="0.7" />
+            <TextBlock Text="{Binding SavePath}"
+                       FontSize="11"
+                       Opacity="0.9"
+                       TextTrimming="CharacterEllipsis"
+                       MaxWidth="240"
+                       ToolTip.Tip="{Binding SavePath}" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <Grid Grid.Row="3"
             ColumnDefinitions="Auto,*"
-            Margin="0,0,0,8">
+            Margin="0,0,0,10">
         <TextBlock Text="{Binding TreeNameLabel}"
                    VerticalAlignment="Center"
                    Margin="0,0,8,0" />
@@ -55,47 +142,391 @@
                  Text="{Binding TreeName, Mode=TwoWay}" />
       </Grid>
 
-      <StackPanel Grid.Row="1"
-                  Orientation="Horizontal"
-                  Spacing="8"
-                  Margin="0,0,0,8">
-        <Button Content="{Binding SaveLabel}" Command="{Binding SaveTreeCommand}" />
-        <Button Content="{Binding SaveAsLabel}" Command="{Binding SaveTreeAsCommand}" />
-        <Button Content="{Binding CreateOnDiskLabel}"
-                Command="{Binding CreateOnDiskCommand}"
-                CommandParameter="{Binding $parent[Window]}" />
-        <Button Content="{Binding AddRootLabel}"
-                Command="{Binding AddRootCommand}"
-                CommandParameter="{Binding $parent[Window]}" />
-      </StackPanel>
-
-      <TreeView Grid.Row="2"
+      <TreeView Grid.Row="4"
                 ItemsSource="{Binding RootNodes}"
-                SelectedItem="{Binding SelectedNode, Mode=TwoWay}">
+                SelectedItem="{Binding SelectedNode, Mode=TwoWay}"
+                DragDrop.AllowDrop="True"
+                DragDrop.DragOver="OnTreeDragOver"
+                DragDrop.Drop="OnTreeDrop"
+                x:Name="EditorTreeView">
         <TreeView.ItemTemplate>
           <TreeDataTemplate ItemsSource="{Binding Children}">
-            <StackPanel Orientation="Horizontal"
-                        Spacing="8">
-              <TextBox Text="{Binding Name, Mode=TwoWay}"
-                       Width="160"
-                       VerticalContentAlignment="Center" />
-              <Button Content="{Binding AddLabel}"
-                      Click="OnAddChild"
-                      Padding="8,1" />
-              <Button Content="{Binding RemoveLabel}"
-                      Command="{Binding RemoveCommand}"
-                      CommandParameter="{Binding}"
-                      Padding="8,1" />
-            </StackPanel>
+            <Grid ColumnSpacing="8"
+                  PointerPressed="OnNodeContextMenuPointerPressed">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" MinWidth="80" />
+              </Grid.ColumnDefinitions>
+              <StackPanel Grid.Column="0"
+                          Orientation="Horizontal"
+                          Spacing="8"
+                          HorizontalAlignment="Left">
+                <Path Data="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+                      Fill="{DynamicResource GpsPrimaryText}"
+                      Classes.is-root="{Binding IsRoot}"
+                      IsVisible="{Binding IsFolder}"
+                      Width="16"
+                      Height="16"
+                      Stretch="Uniform"
+                      VerticalAlignment="Center" />
+                <Path Data="M14,2H6C4.9,2 4,2.9 4,4v16c0,1.1 0.9,2 2,2h12c1.1,0 2,-0.9 2,-2V8L14,2z M16,18H8v-2h8V18z M16,14H8v-2h8V14z M13,9V3.5L18.5,9H13z"
+                      Fill="{DynamicResource GpsPrimaryText}"
+                      IsVisible="{Binding IsFile}"
+                      Width="16"
+                      Height="16"
+                      Stretch="Uniform"
+                      VerticalAlignment="Center" />
+                <TextBlock Text="{Binding Name}"
+                           MaxWidth="180"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center"
+                           Classes.is-root="{Binding IsRoot}"
+                           IsVisible="{Binding IsNotEditing}"
+                           DoubleTapped="OnNameDoubleTapped" />
+                <TextBox Text="{Binding Name, Mode=TwoWay}"
+                         Width="180"
+                         VerticalContentAlignment="Center"
+                         ContextMenu="{x:Null}"
+                         Classes.is-root="{Binding IsRoot}"
+                         IsVisible="{Binding IsEditing}"
+                         LostFocus="OnRenameLostFocus"
+                         KeyDown="OnRenameKeyDown" />
+              </StackPanel>
+
+              <StackPanel Grid.Column="1"
+                          Orientation="Horizontal"
+                          Spacing="4"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Right"
+                          MinWidth="80">
+                <Button Classes="hover-action"
+                        Click="OnAddNodeClick"
+                        ToolTip.Tip="{Binding AddLabel}"
+                        Padding="6,3">
+                  <Button.Transitions>
+                    <Transitions>
+                      <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                    </Transitions>
+                  </Button.Transitions>
+                  <Path Data="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6V13z"
+                        Width="14"
+                        Height="14"
+                        Stretch="Uniform"
+                        Fill="{DynamicResource GpsAccent}" />
+                </Button>
+                <Button Classes="hover-action"
+                        Click="OnRenameClick"
+                        ToolTip.Tip="{Binding RenameLabel}"
+                        Padding="6,3">
+                  <Button.Transitions>
+                    <Transitions>
+                      <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                    </Transitions>
+                  </Button.Transitions>
+                  <Path Data="M3,17.25V21h3.75L17.81,9.94l-3.75,-3.75L3,17.25z M20.71,7.04c0.39,-0.39 0.39,-1.02 0,-1.41l-2.34,-2.34c-0.39,-0.39 -1.02,-0.39 -1.41,0l-1.83,1.83 3.75,3.75 1.83,-1.83z"
+                        Width="14"
+                        Height="14"
+                        Stretch="Uniform"
+                        Fill="{DynamicResource GpsAccentText}" />
+                </Button>
+                <Button Classes="hover-action"
+                        Command="{Binding RemoveCommand}"
+                        CommandParameter="{Binding}"
+                        ToolTip.Tip="{Binding RemoveLabel}"
+                        Padding="6,3">
+                  <Button.Transitions>
+                    <Transitions>
+                      <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                    </Transitions>
+                  </Button.Transitions>
+                  <Path Data="M6,19c0,1.1 0.9,2 2,2h8c1.1,0 2,-0.9 2,-2V7H6V19z M19,4h-3.5l-1,-1h-5l-1,1H5v2h14V4z"
+                        Width="14"
+                        Height="14"
+                        Stretch="Uniform"
+                        Fill="#E0564F" />
+                </Button>
+              </StackPanel>
+            </Grid>
           </TreeDataTemplate>
         </TreeView.ItemTemplate>
       </TreeView>
 
-      <TextBlock Grid.Row="3"
+      <TextBlock Grid.Row="5"
                  Text="{Binding StatusMessage}"
                  Margin="0,8,0,0"
                  Opacity="0.8"
                  TextTrimming="CharacterEllipsis" />
     </Grid>
+
+    <!-- Right column: Tree Preview + Ascii Preview panels side-by-side with window controls -->
+    <Grid Grid.Column="1"
+          x:Name="PreviewSplitGrid"
+          ColumnDefinitions="1.5*,1*"
+          Margin="15,0,0,0">
+
+      <!-- Tree Preview panel -->
+      <Border Grid.Column="0"
+              x:Name="TreePreviewPanel"
+              Background="{DynamicResource GpsAdditional}"
+              BorderBrush="{DynamicResource GpsBorder}"
+              BorderThickness="1"
+              CornerRadius="6">
+        <Grid RowDefinitions="Auto,*">
+          <Border BorderBrush="{DynamicResource GpsBorder}"
+                  BorderThickness="0,0,0,1"
+                  Padding="8,4">
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0"
+                         Text="{Binding TreePreviewLabel}"
+                         FontWeight="Bold"
+                         VerticalAlignment="Center" />
+              <StackPanel Grid.Column="1"
+                          Orientation="Horizontal"
+                          Spacing="2">
+                <Button Content="—"
+                        ToolTip.Tip="{Binding MinimizeLabel}"
+                        Click="OnMinimizeTreePreviewClick"
+                        Classes="panel-control" />
+                <Button Content="□"
+                        ToolTip.Tip="{Binding MaximizeLabel}"
+                        Click="OnMaximizeTreePreviewClick"
+                        Classes="panel-control" />
+                <Button Content="✕"
+                        ToolTip.Tip="{Binding CloseLabel}"
+                        Click="OnCloseTreePreviewClick"
+                        Classes="panel-control panel-close" />
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          <ScrollViewer Grid.Row="1"
+                        x:Name="TreePreviewContent">
+            <TreeView ItemsSource="{Binding RootNodes}"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      Padding="8">
+              <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Children}">
+                  <StackPanel Orientation="Horizontal"
+                              Spacing="6">
+                    <Path Data="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+                          Fill="{DynamicResource GpsPrimaryText}"
+                          Classes.is-root="{Binding IsRoot}"
+                          IsVisible="{Binding IsFolder}"
+                          Width="16"
+                          Height="16"
+                          Stretch="Uniform"
+                          VerticalAlignment="Center" />
+                    <Path Data="M14,2H6C4.9,2 4,2.9 4,4v16c0,1.1 0.9,2 2,2h12c1.1,0 2,-0.9 2,-2V8L14,2z M16,18H8v-2h8V18z M16,14H8v-2h8V14z M13,9V3.5L18.5,9H13z"
+                          Fill="{DynamicResource GpsPrimaryText}"
+                          IsVisible="{Binding IsFile}"
+                          Width="16"
+                          Height="16"
+                          Stretch="Uniform"
+                          VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Name}"
+                               Classes.is-root="{Binding IsRoot}"
+                               VerticalAlignment="Center" />
+                  </StackPanel>
+                </TreeDataTemplate>
+              </TreeView.ItemTemplate>
+            </TreeView>
+          </ScrollViewer>
+        </Grid>
+      </Border>
+
+      <!-- Restore buttons (overlay, shown when Ascii panel is closed) -->
+      <StackPanel Grid.Column="0"
+                  x:Name="RestoreButtons"
+                  Orientation="Horizontal"
+                  Spacing="6"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  IsVisible="False">
+        <Button Content="{Binding AsciiPreviewLabel}"
+                Click="OnRestorePanelsClick"
+                Classes="panel-restore"
+                Tag="ascii" />
+      </StackPanel>
+
+      <!-- Ascii Preview panel -->
+      <Border Grid.Column="1"
+              x:Name="AsciiPreviewPanel"
+              Background="{DynamicResource GpsAdditional}"
+              BorderBrush="{DynamicResource GpsBorder}"
+              BorderThickness="1"
+              CornerRadius="6">
+        <Grid RowDefinitions="Auto,*">
+          <Border BorderBrush="{DynamicResource GpsBorder}"
+                  BorderThickness="0,0,0,1"
+                  Padding="8,4">
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0"
+                         Text="{Binding AsciiPreviewLabel}"
+                         FontWeight="Bold"
+                         VerticalAlignment="Center" />
+              <StackPanel Grid.Column="1"
+                          Orientation="Horizontal"
+                          Spacing="2">
+                <Button Content="—"
+                        ToolTip.Tip="{Binding MinimizeLabel}"
+                        Click="OnMinimizeAsciiPreviewClick"
+                        Classes="panel-control" />
+                <Button Content="□"
+                        ToolTip.Tip="{Binding MaximizeLabel}"
+                        Click="OnMaximizeAsciiPreviewClick"
+                        Classes="panel-control" />
+                <Button Content="✕"
+                        ToolTip.Tip="{Binding CloseLabel}"
+                        Click="OnCloseAsciiPreviewClick"
+                        Classes="panel-control panel-close" />
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          <TextBox Grid.Row="1"
+                   x:Name="AsciiPreviewContent"
+                   Text="{Binding AsciiPreview}"
+                   IsReadOnly="True"
+                   FontFamily="Consolas, Courier New, monospace"
+                   FontSize="13"
+                   Background="Transparent"
+                   BorderThickness="0"
+                   Padding="8"
+                   TextWrapping="NoWrap"
+                   AcceptsReturn="True"
+                   ScrollViewer.VerticalScrollBarVisibility="Auto"
+                   ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+        </Grid>
+      </Border>
+    </Grid>
   </Grid>
+
+  <Popup x:Name="NodeContextPopup"
+         Placement="Pointer"
+         IsLightDismissEnabled="True"
+         IsOpen="{Binding IsNodeContextMenuOpen, Mode=TwoWay}">
+    <Border Background="{DynamicResource GpsElement}"
+            BorderBrush="{DynamicResource GpsBorder}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="8"
+            MinWidth="180"
+            BoxShadow="0 6 16 0 #66000000">
+      <StackPanel Spacing="4">
+        <Button Content="{Binding CopyLabel}"
+                Command="{Binding CopyCommand}"
+                CommandParameter="{Binding ContextMenuNode}"
+                Click="OnNodeContextAction"
+                HorizontalAlignment="Stretch" />
+        <Button Content="{Binding CutLabel}"
+                Command="{Binding CutCommand}"
+                CommandParameter="{Binding ContextMenuNode}"
+                Click="OnNodeContextAction"
+                HorizontalAlignment="Stretch" />
+        <Button Content="{Binding PasteLabel}"
+                Command="{Binding PasteCommand}"
+                CommandParameter="{Binding ContextMenuNode}"
+                Click="OnNodeContextAction"
+                HorizontalAlignment="Stretch" />
+        <Border Height="1"
+                Background="{DynamicResource GpsBorder}"
+                Margin="0,4" />
+        <!-- Name-only actions: copy/paste the node's NAME as plain text. -->
+        <Button Content="{Binding CopyNameLabel}"
+                Command="{Binding CopyNameCommand}"
+                CommandParameter="{Binding ContextMenuNode}"
+                Click="OnNodeContextAction"
+                HorizontalAlignment="Stretch" />
+        <Button Content="{Binding PasteNameLabel}"
+                Command="{Binding PasteNameCommand}"
+                CommandParameter="{Binding ContextMenuNode}"
+                Click="OnNodeContextAction"
+                HorizontalAlignment="Stretch" />
+        <Border Height="1"
+                Background="{DynamicResource GpsBorder}"
+                Margin="0,4" />
+        <Button Content="{Binding DeleteLabel}"
+                Command="{Binding DeleteCommand}"
+                CommandParameter="{Binding ContextMenuNode}"
+                Click="OnNodeContextAction"
+                HorizontalAlignment="Stretch" />
+      </StackPanel>
+    </Border>
+  </Popup>
+
+  <!-- Right-click Paste for the node rename box: pastes the clipboard TEXT as the
+       name only. Handled in code (PointerPressed marks Handled) so it never bubbles
+       to the node context menu and never creates a node/folder. -->
+  <Popup x:Name="RenamePastePopup"
+         Placement="Pointer"
+         IsLightDismissEnabled="True"
+         IsOpen="False">
+    <Border Background="{DynamicResource GpsElement}"
+            BorderBrush="{DynamicResource GpsBorder}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="8"
+            MinWidth="160"
+            BoxShadow="0 6 16 0 #66000000">
+      <StackPanel Spacing="4">
+        <Button Content="{Binding PasteLabel}"
+                Click="OnRenamePasteClick"
+                HorizontalAlignment="Stretch" />
+      </StackPanel>
+    </Border>
+  </Popup>
+
+  <Popup x:Name="NodePopup"
+         Placement="Right"
+         HorizontalOffset="10"
+         IsLightDismissEnabled="True"
+         IsOpen="{Binding IsNodePopupOpen, Mode=TwoWay}">
+    <Border Background="{DynamicResource GpsElement}"
+            BorderBrush="{DynamicResource GpsBorder}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="12"
+            MinWidth="360"
+            BoxShadow="0 6 16 0 #66000000">
+      <StackPanel Spacing="10">
+        <TextBlock Text="{Binding AddNodeLabel}"
+                   FontWeight="Bold"
+                   Foreground="{DynamicResource GpsAccentText}" />
+
+        <StackPanel Orientation="Horizontal"
+                    Spacing="6">
+          <Button Content="{Binding FolderLabel}"
+                  Classes="node-type active"
+                  Classes.active="{Binding NewNodeIsFolder}"
+                  Command="{Binding SetNodeTypeCommand}"
+                  CommandParameter="folder" />
+          <Button Content="{Binding FileLabel}"
+                  Classes="node-type active"
+                  Classes.active="{Binding NewNodeIsFile}"
+                  Command="{Binding SetNodeTypeCommand}"
+                  CommandParameter="file" />
+          <TextBox Text="{Binding NewNodeName, Mode=TwoWay}"
+                   Watermark="{Binding NewNodePromptLabel}"
+                   Width="150"
+                   VerticalContentAlignment="Center" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal"
+                    Spacing="6"
+                    HorizontalAlignment="Right">
+          <Button Content="{Binding CancelLabel}"
+                  Command="{Binding CancelNodeEditCommand}" />
+          <Button Content="{Binding ConfirmLabel}"
+                  Classes="node-add"
+                  Command="{Binding AddNodeCommand}" />
+        </StackPanel>
+
+        <Button Content="{Binding DeleteNodeLabel}"
+                Command="{Binding DeleteEditNodeCommand}"
+                HorizontalAlignment="Left" />
+      </StackPanel>
+    </Border>
+  </Popup>
+  </Panel>
 </UserControl>

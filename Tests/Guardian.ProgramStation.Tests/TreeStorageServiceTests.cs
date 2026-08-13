@@ -34,6 +34,52 @@ public sealed class TreeStorageServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task SaveTreeToFileAsync_NullPath_WritesNothing()
+    {
+        var service = new TreeStorageService();
+        var tree = new TreeModel { Name = "Cancelled" };
+        var target = Path.Combine(_dataDir, "should-not-exist.json");
+
+        // The save dialog was cancelled: no location was chosen.
+        await service.SaveTreeToFileAsync(tree, null);
+
+        Assert.False(File.Exists(target));
+    }
+
+    [Fact]
+    public async Task SaveTreeToFileAsync_EmptyPath_WritesNothing()
+    {
+        var service = new TreeStorageService();
+        var tree = new TreeModel { Name = "Cancelled" };
+        var target = Path.Combine(_dataDir, "should-not-exist.json");
+
+        // The save dialog was cancelled: no location was chosen.
+        await service.SaveTreeToFileAsync(tree, string.Empty);
+
+        Assert.False(File.Exists(target));
+    }
+
+    [Fact]
+    public async Task SaveTreeToFileAsync_WritesTreeToGivenPath()
+    {
+        var service = new TreeStorageService();
+        var tree = new TreeModel
+        {
+            Name = "Chosen Location",
+            Nodes = new List<TreeNodeModel> { new() { Name = "app.exe", NodeType = "file" } },
+        };
+        var target = Path.Combine(_dataDir, "chosen-location.json");
+
+        await service.SaveTreeToFileAsync(tree, target);
+
+        Assert.True(File.Exists(target));
+
+        var loaded = await File.ReadAllTextAsync(target);
+        Assert.Contains("\"Name\": \"Chosen Location\"", loaded);
+        Assert.Contains("app.exe", loaded);
+    }
+
+    [Fact]
     public async Task LoadTreesAsync_ReturnsAllSavedTrees()
     {
         var service = new TreeStorageService();

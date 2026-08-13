@@ -9,6 +9,7 @@ using Guardian.ProgramStation.Application.Interfaces;
 using Guardian.ProgramStation.Infrastructure.Scheduling;
 using Guardian.ProgramStation.Infrastructure.Services;
 using Guardian.ProgramStation.Kernel;
+using Guardian.ProgramStation.UI.Services;
 using Guardian.ProgramStation.UI.Themes;
 using Guardian.ProgramStation.UI.ViewModels;
 using Guardian.ProgramStation.UI.Views;
@@ -19,6 +20,7 @@ namespace Guardian.ProgramStation.UI;
 public partial class App : Avalonia.Application
 {
     private ServiceProvider? _services;
+    private bool _themeStylesLoaded;
 
     public override void Initialize()
     {
@@ -40,7 +42,8 @@ public partial class App : Avalonia.Application
             e.Handled = true;
         };
 
-        _services = DependencyInjection.BuildServiceProvider();
+        _services = DependencyInjection.BuildServiceProvider(services =>
+            services.AddSingleton<IClipboardService, SystemClipboardService>());
 
         var localization = _services.GetRequiredService<ILocalizationService>();
         var settingsService = _services.GetRequiredService<ISettingsService>();
@@ -51,7 +54,9 @@ public partial class App : Avalonia.Application
             localization.SetLanguageAsync(settings.Language).GetAwaiter().GetResult();
         }
 
-        ApplyTheme(settings.ThemeId);
+        var themeService = _services.GetRequiredService<IThemeService>();
+        var theme = themeService.GetThemeAsync(settings.ThemeId).GetAwaiter().GetResult();
+        ApplyTheme(settings.ThemeId, theme.Palette);
 
         var scheduler = _services.GetRequiredService<IndexingScheduler>();
         scheduler.Start();
@@ -68,12 +73,16 @@ public partial class App : Avalonia.Application
 
     public void ApplyTheme(string themeId, ThemePalette? palette = null)
     {
-        IStyle theme = themeId switch
+        // All built-in themes (Dark/Light/Custom) share identical control
+        // templates; only the color palette differs. Load the template set
+        // once and swap only the brushes on every switch, so changing themes
+        // never triggers a full style re-evaluation of the whole UI.
+        if (!_themeStylesLoaded)
         {
-            "light" => new LightTheme(),
-            "custom" => new CustomTheme(),
-            _ => new DarkTheme(),
-        };
+            Styles.Clear();
+            Styles.Add(new DarkTheme());
+            _themeStylesLoaded = true;
+        }
 
         RequestedThemeVariant = themeId switch
         {
@@ -81,16 +90,19 @@ public partial class App : Avalonia.Application
             _ => ThemeVariant.Dark,
         };
 
-        Styles.Clear();
-        Styles.Add(theme);
-
         if (palette is not null)
         {
-            SetPalette(palette);
+            var accent = themeId switch
+            {
+                "light" => "#8A7A63",
+                _ => "#5B9BD5",
+            };
+
+            SetPalette(palette, accent);
         }
     }
 
-    private static void SetPalette(ThemePalette palette)
+    private static void SetPalette(ThemePalette palette, string accent)
     {
         SetBrush("GpsBackground", palette.Background);
         SetBrush("GpsElement", palette.ElementBackground);
@@ -98,7 +110,7 @@ public partial class App : Avalonia.Application
         SetBrush("GpsBorder", palette.Border);
         SetBrush("GpsPrimaryText", palette.PrimaryText);
         SetBrush("GpsAccentText", palette.AccentText);
-        SetBrush("GpsAccent", palette.AccentText);
+        SetBrush("GpsAccent", accent);
     }
 
     private static void SetBrush(string key, string? color)

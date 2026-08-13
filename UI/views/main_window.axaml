@@ -4,85 +4,284 @@
         Title="{Binding AppTitle}"
         Width="1100"
         Height="720"
-        MinWidth="860"
-        MinHeight="560"
+        MinWidth="1000"
+        MinHeight="640"
         WindowStartupLocation="CenterScreen"
         FlowDirection="{Binding Direction}">
 
-  <Grid ColumnDefinitions="220,*">
-    <Grid Grid.Column="0"
-          Background="{DynamicResource GpsElement}">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-        <RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
+  <DockPanel>
+    <Menu DockPanel.Dock="Top"
+          Background="{DynamicResource GpsElement}"
+          Padding="4,2">
+      <MenuItem Header="{Binding FileMenuLabel}">
+        <MenuItem Header="{Binding TreeManager.NewLabel}"
+                  Command="{Binding TreeManager.NewTreeCommand}"
+                  CommandParameter="{Binding $parent[Window]}"
+                  InputGesture="Ctrl+N"
+                  HotKey="Ctrl+N" />
+        <MenuItem Header="{Binding TreeManager.OpenLabel}"
+                  Command="{Binding TreeManager.OpenTreeCommand}"
+                  CommandParameter="{Binding $parent[Window]}"
+                  InputGesture="Ctrl+O"
+                  HotKey="Ctrl+O" />
+        <MenuItem Header="{Binding TreeManager.ImportFromPathLabel}"
+                  Command="{Binding TreeManager.ImportFromPathCommand}"
+                  CommandParameter="{Binding $parent[Window]}" />
+        <Separator />
+        <MenuItem Header="{Binding TreeManager.SaveLabel}"
+                  Command="{Binding TreeManager.SaveTreeCommand}"
+                  CommandParameter="{Binding $parent[Window]}"
+                  InputGesture="Ctrl+S"
+                  HotKey="Ctrl+S" />
+        <MenuItem Header="{Binding TreeManager.SaveAsLabel}"
+                  Command="{Binding TreeManager.SaveTreeAsCommand}"
+                  CommandParameter="{Binding $parent[Window]}"
+                  InputGesture="Ctrl+Shift+S"
+                  HotKey="Ctrl+Shift+S" />
+        <MenuItem Header="{Binding TreeManager.ExportTextLabel}"
+                  Command="{Binding TreeManager.ExportTextCommand}"
+                  CommandParameter="{Binding $parent[Window]}" />
+        <MenuItem Header="{Binding TreeManager.ExportImageLabel}"
+                  Command="{Binding TreeManager.ExportImageCommand}"
+                  CommandParameter="{Binding $parent[Window]}" />
+        <Separator />
+        <MenuItem Header="{Binding TreeManager.ImportFoldersOnlyLabel}"
+                  ToggleType="CheckBox"
+                  IsChecked="{Binding TreeManager.ImportFoldersOnly, Mode=TwoWay}" />
+        <Separator />
+        <MenuItem Header="{Binding TreeManager.DeleteTreeLabel}"
+                  Command="{Binding TreeManager.DeleteCurrentTreeCommand}"
+                  CommandParameter="{Binding $parent[Window]}" />
+        <Separator />
+        <MenuItem Header="{Binding ExitLabel}"
+                  Command="{Binding ExitCommand}"
+                  InputGesture="Alt+F4"
+                  HotKey="Alt+F4" />
+      </MenuItem>
 
-      <TextBlock Text="{Binding AppTitle}"
-                 Margin="16,20,16,12"
-                 FontSize="18"
-                 FontWeight="Bold"
-                 Foreground="{DynamicResource GpsAccentText}"
-                 TextWrapping="Wrap" />
+      <MenuItem Header="{Binding EditMenuLabel}">
+        <MenuItem Header="{Binding UndoLabel}"
+                  IsEnabled="False"
+                  InputGesture="Ctrl+Z"
+                  HotKey="Ctrl+Z" />
+        <MenuItem Header="{Binding RedoLabel}"
+                  IsEnabled="False"
+                  InputGesture="Ctrl+Y"
+                  HotKey="Ctrl+Y" />
+        <Separator />
+        <!-- NB: these four shortcuts are handled by the focus-aware key handler in
+             TreeManagerView (OnTreeManagerKeyDown) so they never steal keys from a
+             focused TextBox (rename box / tree name / search). No InputGesture here. -->
+        <MenuItem Header="{Binding TreeManager.CopyLabel}"
+                  Command="{Binding TreeManager.CopyCommand}"
+                  CommandParameter="{Binding TreeManager.SelectedNode}" />
+        <MenuItem Header="{Binding TreeManager.CutLabel}"
+                  Command="{Binding TreeManager.CutCommand}"
+                  CommandParameter="{Binding TreeManager.SelectedNode}" />
+        <MenuItem Header="{Binding TreeManager.PasteLabel}"
+                  Command="{Binding TreeManager.PasteCommand}"
+                  CommandParameter="{Binding TreeManager.SelectedNode}" />
+        <MenuItem Header="{Binding TreeManager.DeleteLabel}"
+                  Command="{Binding TreeManager.DeleteCommand}"
+                  CommandParameter="{Binding TreeManager.SelectedNode}" />
+      </MenuItem>
 
-      <StackPanel Grid.Row="1"
-                  Spacing="4"
-                  Margin="8,0,8,0">
-        <Button Content="{Binding DashboardLabel}"
-                Command="{Binding ShowDashboardCommand}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Left" />
-        <Button Content="{Binding Reports}"
-                Command="{Binding ShowReportCommand}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Left" />
-        <Button Content="{Binding Trees}"
-                Command="{Binding ShowTreesCommand}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Left" />
-        <Button Content="{Binding SettingsLabel}"
+      <MenuItem Header="{Binding ViewMenuLabel}">
+        <MenuItem Header="{Binding DashboardLabel}" Command="{Binding ShowDashboardCommand}" />
+        <MenuItem Header="{Binding Reports}" Command="{Binding ShowReportCommand}" />
+        <MenuItem Header="{Binding Trees}" Command="{Binding ShowTreesCommand}" />
+        <Separator />
+        <MenuItem Header="{Binding LanguageButtonText}" Command="{Binding SwitchLanguageCommand}" />
+        <MenuItem Header="{Binding ToggleThemeLabel}" Command="{Binding ToggleThemeCommand}" />
+      </MenuItem>
+
+      <MenuItem Header="{Binding TextMenuLabel}">
+        <MenuItem Header="{Binding TextOptionsLabel}" IsEnabled="False" />
+      </MenuItem>
+
+      <MenuItem Header="{Binding ToolsMenuLabel}">
+        <MenuItem Header="{Binding IndexNow}" Command="{Binding IndexNowCommand}" />
+        <MenuItem Header="{Binding TreeManager.CreateOnDiskLabel}"
+                  Command="{Binding TreeManager.CreateOnDiskCommand}"
+                  CommandParameter="{Binding $parent[Window]}" />
+        <Separator />
+        <MenuItem Header="{Binding TreeManager.SortLabel}">
+          <MenuItem Header="{Binding TreeManager.SortNameAscLabel}"
+                    Command="{Binding TreeManager.SortCommand}"
+                    CommandParameter="NameAscending" />
+          <MenuItem Header="{Binding TreeManager.SortNameDescLabel}"
+                    Command="{Binding TreeManager.SortCommand}"
+                    CommandParameter="NameDescending" />
+          <Separator />
+          <MenuItem Header="{Binding TreeManager.SortOldestFirstLabel}"
+                    Command="{Binding TreeManager.SortCommand}"
+                    CommandParameter="CreationOldestFirst" />
+          <MenuItem Header="{Binding TreeManager.SortNewestFirstLabel}"
+                    Command="{Binding TreeManager.SortCommand}"
+                    CommandParameter="CreationNewestFirst" />
+        </MenuItem>
+      </MenuItem>
+
+      <MenuItem Header="{Binding SettingsLabel}"
                 Command="{Binding ShowSettingsCommand}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Left" />
+                CommandParameter="{Binding $parent[Window]}" />
+
+      <MenuItem Header="{Binding HelpMenuLabel}">
+        <MenuItem Header="{Binding AboutLabel}" IsEnabled="False" />
+      </MenuItem>
+    </Menu>
+
+    <Border DockPanel.Dock="Top"
+            Background="{DynamicResource GpsAdditional}"
+            BorderBrush="{DynamicResource GpsBorder}"
+            BorderThickness="0,0,0,1"
+            Padding="8,5">
+      <StackPanel Orientation="Horizontal"
+                  Spacing="4">
+        <Button Command="{Binding TreeManager.NewTreeCommand}"
+                CommandParameter="{Binding $parent[Window]}"
+                ToolTip.Tip="{Binding TreeManager.NewLabel}"
+                Padding="8,4">
+          <Path Data="M14,2H6C4.9,2 4,2.9 4,4v16c0,1.1 0.9,2 2,2h12c1.1,0 2,-0.9 2,-2V8L14,2z M16,18H8v-2h8V18z M16,14H8v-2h8V14z M13,9V3.5L18.5,9H13z"
+                Fill="{DynamicResource GpsPrimaryText}"
+                Width="18"
+                Height="18"
+                Stretch="Uniform" />
+        </Button>
+        <Button Command="{Binding TreeManager.OpenTreeCommand}"
+                CommandParameter="{Binding $parent[Window]}"
+                ToolTip.Tip="{Binding TreeManager.OpenLabel}"
+                Padding="8,4">
+          <Path Data="M10,4H4C2.9,4 2,4.9 2,6v12c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2V8c0,-1.1 -0.9,-2 -2,-2h-8L10,4z"
+                Fill="{DynamicResource GpsPrimaryText}"
+                Width="18"
+                Height="18"
+                Stretch="Uniform" />
+        </Button>
+        <Button Command="{Binding TreeManager.SaveTreeCommand}"
+                CommandParameter="{Binding $parent[Window]}"
+                ToolTip.Tip="{Binding TreeManager.SaveLabel}"
+                Padding="8,4">
+          <Path Data="M17,3H5c-1.11,0 -2,0.9 -2,2v14c0,1.1 0.89,2 2,2h14c1.1,0 2,-0.9 2,-2V7L17,3z M12,19c-1.66,0 -3,-1.34 -3,-3s1.34,-3 3,-3 3,1.34 3,3 -1.34,3 -3,3z M15,9H5V5h10V9z"
+                Fill="{DynamicResource GpsPrimaryText}"
+                Width="18"
+                Height="18"
+                Stretch="Uniform" />
+        </Button>
+        <Button Command="{Binding TreeManager.SaveTreeAsCommand}"
+                CommandParameter="{Binding $parent[Window]}"
+                ToolTip.Tip="{Binding TreeManager.SaveAsLabel}"
+                Padding="8,4">
+          <Path Data="M19,12v7H5v-7H3v7c0,1.1 0.9,2 2,2h14c1.1,0 2,-0.9 2,-2v-7H19z M13,12.67l2.59,-2.58L17,11.5l-5,5 -5,-5 1.41,-1.41L11,12.67V3h2V12.67z"
+                Fill="{DynamicResource GpsPrimaryText}"
+                Width="18"
+                Height="18"
+                Stretch="Uniform" />
+        </Button>
+        <Button Command="{Binding TreeManager.AddRootCommand}"
+                CommandParameter="{Binding $parent[Window]}"
+                ToolTip.Tip="{Binding TreeManager.AddRootLabel}"
+                Padding="8,4">
+          <Path Data="M20,6h-8l-2,-2H4C2.9,4 2,4.9 2,6v12c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2V8C22,6.9 21.1,6 20,6z M14,14h-3v3h-2v-3H6v-2h3V9h2v3h3V14z"
+                Fill="{DynamicResource GpsPrimaryText}"
+                Width="18"
+                Height="18"
+                Stretch="Uniform" />
+        </Button>
+        <Button x:Name="SortButton"
+                Content="{Binding TreeManager.SortLabel}"
+                Click="OnSortClick"
+                Padding="8,4"
+                ToolTip.Tip="{Binding TreeManager.SortLabel}" />
+        <Button Command="{Binding TreeManager.DeleteCurrentTreeCommand}"
+                CommandParameter="{Binding $parent[Window]}"
+                ToolTip.Tip="{Binding TreeManager.DeleteTreeLabel}"
+                Padding="8,4">
+          <Path Data="M6,19c0,1.1 0.9,2 2,2h8c1.1,0 2,-0.9 2,-2V7H6V19z M19,4h-3.5l-1,-1h-5l-1,1H5v2h14V4z"
+                Fill="{DynamicResource GpsPrimaryText}"
+                Width="18"
+                Height="18"
+                Stretch="Uniform" />
+        </Button>
+        <Button Command="{Binding TreeManager.CreateOnDiskCommand}"
+                CommandParameter="{Binding $parent[Window]}"
+                ToolTip.Tip="{Binding TreeManager.CreateOnDiskLabel}"
+                Padding="8,4">
+          <Path Data="M2,20h20v-4H2V20z M4,17h2v2H4V17z M2,4v4h20V4H2z M4,7h2V5H4V7z M2,14h20v-4H2V14z M4,11h2v2H4V11z"
+                Fill="{DynamicResource GpsPrimaryText}"
+                Width="18"
+                Height="18"
+                Stretch="Uniform" />
+        </Button>
+
+        <Border Width="1"
+                Background="{DynamicResource GpsBorder}"
+                Margin="6,3" />
+
+        <Button IsEnabled="False"
+                ToolTip.Tip="{Binding UndoLabel}"
+                Padding="8,4">
+          <Path Data="M12.5,8c-2.65,0 -5.05,0.99 -6.9,2.6L2,7v9h9l-3.62,-3.62c1.39,-1.16 3.16,-1.88 5.12,-1.88 3.54,0 6.55,2.31 7.6,5.5l2.37,-0.78C21.08,11.03 17.15,8 12.5,8z"
+                Fill="{DynamicResource GpsPrimaryText}"
+                Width="18"
+                Height="18"
+                Stretch="Uniform" />
+        </Button>
+        <Button IsEnabled="False"
+                ToolTip.Tip="{Binding RedoLabel}"
+                Padding="8,4">
+          <Path Data="M18.4,10.6C16.55,8.99 14.15,8 11.5,8c-4.65,0 -8.58,3.03 -9.96,7.22L3.9,16c1.05,-3.19 4.05,-5.5 7.6,-5.5 1.95,0 3.73,0.72 5.12,1.88L13,16h9V7L18.4,10.6z"
+                Fill="{DynamicResource GpsPrimaryText}"
+                Width="18"
+                Height="18"
+                Stretch="Uniform" />
+        </Button>
       </StackPanel>
+    </Border>
 
-      <StackPanel Grid.Row="2"
-                  Spacing="8"
-                  Margin="8,0,8,16">
-        <Button Content="{Binding LanguageButtonText}"
-                Command="{Binding SwitchLanguageCommand}" />
-        <Button Content="{Binding IndexNow}"
-                Command="{Binding IndexNowCommand}" />
-      </StackPanel>
-    </Grid>
+    <!-- Sort options popup: same proven mechanism as the node-add popup. -->
+    <Popup x:Name="SortMenuPopup"
+           PlacementTarget="{Binding #SortButton}"
+           Placement="Bottom"
+           IsLightDismissEnabled="True"
+           IsOpen="{Binding TreeManager.IsSortMenuOpen, Mode=TwoWay}">
+      <Border Background="{DynamicResource GpsElement}"
+              BorderBrush="{DynamicResource GpsBorder}"
+              BorderThickness="1"
+              CornerRadius="6"
+              Padding="8"
+              MinWidth="220"
+              BoxShadow="0 6 16 0 #66000000">
+        <StackPanel Spacing="4">
+          <Button Content="{Binding TreeManager.SortNameAscLabel}"
+                  Command="{Binding TreeManager.SortCommand}"
+                  CommandParameter="NameAscending"
+                  HorizontalAlignment="Stretch" />
+          <Button Content="{Binding TreeManager.SortNameDescLabel}"
+                  Command="{Binding TreeManager.SortCommand}"
+                  CommandParameter="NameDescending"
+                  HorizontalAlignment="Stretch" />
+          <Border Height="1"
+                  Background="{DynamicResource GpsBorder}"
+                  Margin="0,4" />
+          <Button Content="{Binding TreeManager.SortOldestFirstLabel}"
+                  Command="{Binding TreeManager.SortCommand}"
+                  CommandParameter="CreationOldestFirst"
+                  HorizontalAlignment="Stretch" />
+          <Button Content="{Binding TreeManager.SortNewestFirstLabel}"
+                  Command="{Binding TreeManager.SortCommand}"
+                  CommandParameter="CreationNewestFirst"
+                  HorizontalAlignment="Stretch" />
+        </StackPanel>
+      </Border>
+    </Popup>
 
-    <Grid Grid.Column="1"
-          RowDefinitions="Auto,*">
-      <Grid Grid.Row="0"
-            ColumnDefinitions="*,Auto"
-            Margin="16,12,16,8">
-        <TextBlock Text="{Binding AppTitle}"
-                   FontSize="16"
-                   FontWeight="Bold"
-                   VerticalAlignment="Center" />
-        <TextBlock Grid.Column="1"
-                   Text="{Binding StatusMessage}"
-                   VerticalAlignment="Center"
-                   Margin="16,0,0,0"
-                   Opacity="0.8"
-                   TextTrimming="CharacterEllipsis" />
-      </Grid>
-
-      <Grid Grid.Row="1">
-        <ContentControl x:Name="DashboardHost"
-                        IsVisible="{Binding IsDashboardVisible}" />
-        <ContentControl x:Name="ReportHost"
-                        IsVisible="{Binding IsReportVisible}" />
-        <ContentControl x:Name="TreeHost"
+    <Grid>
+      <ContentControl x:Name="DashboardHost"
+                      IsVisible="{Binding IsDashboardVisible}" />
+      <ContentControl x:Name="ReportHost"
+                      IsVisible="{Binding IsReportVisible}" />        <ContentControl x:Name="TreeHost"
                         IsVisible="{Binding IsTreesVisible}" />
-        <ContentControl x:Name="SettingsHost"
-                        IsVisible="{Binding IsSettingsVisible}" />
       </Grid>
-    </Grid>
-  </Grid>
+  </DockPanel>
 </Window>

@@ -7,7 +7,19 @@
         MinWidth="480"
         MinHeight="400"
         WindowStartupLocation="CenterOwner"
-        FlowDirection="{Binding Direction}">
+        FlowDirection="{Binding Direction}"
+        KeyDown="OnTreeEditorKeyDown">
+  <Window.Styles>
+    <Style Selector="TextBlock.is-root">
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Foreground" Value="{DynamicResource GpsAccentText}" />
+    </Style>
+    <Style Selector="TextBox.is-root">
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Foreground" Value="{DynamicResource GpsAccentText}" />
+    </Style>
+  </Window.Styles>
+
   <DockPanel Margin="16">
     <StackPanel DockPanel.Dock="Bottom"
                 Orientation="Horizontal"
@@ -45,10 +57,12 @@
         <TreeView.ItemTemplate>
           <TreeDataTemplate ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal"
-                        Spacing="8">
+                        Spacing="8"
+                        PointerPressed="OnNodeContextMenuPointerPressed">
               <TextBox Text="{Binding Name, Mode=TwoWay}"
                        Width="200"
-                       VerticalContentAlignment="Center" />
+                       VerticalContentAlignment="Center"
+                       Classes.is-root="{Binding IsRoot}" />
               <Button Content="{Binding AddLabel}"
                       Click="OnAddChild"
                       Padding="8,1" />
@@ -61,5 +75,58 @@
         </TreeView.ItemTemplate>
       </TreeView>
     </Grid>
+
+    <Popup x:Name="NodeContextPopup"
+           Placement="Pointer"
+           IsLightDismissEnabled="True"
+           IsOpen="{Binding IsNodeContextMenuOpen, Mode=TwoWay}">
+      <Border Background="{DynamicResource GpsElement}"
+              BorderBrush="{DynamicResource GpsBorder}"
+              BorderThickness="1"
+              CornerRadius="6"
+              Padding="8"
+              MinWidth="180"
+              BoxShadow="0 6 16 0 #66000000">
+        <StackPanel Spacing="4">
+          <Button Content="{Binding CopyLabel}"
+                  Command="{Binding CopyCommand}"
+                  CommandParameter="{Binding ContextMenuNode}"
+                  Click="OnNodeContextAction"
+                  HorizontalAlignment="Stretch" />
+          <Button Content="{Binding CutLabel}"
+                  Command="{Binding CutCommand}"
+                  CommandParameter="{Binding ContextMenuNode}"
+                  Click="OnNodeContextAction"
+                  HorizontalAlignment="Stretch" />
+          <Button Content="{Binding PasteLabel}"
+                  Command="{Binding PasteCommand}"
+                  CommandParameter="{Binding ContextMenuNode}"
+                  Click="OnNodeContextAction"
+                  HorizontalAlignment="Stretch" />
+          <Border Height="1"
+                  Background="{DynamicResource GpsBorder}"
+                  Margin="0,4" />
+          <!-- Name-only actions: copy/paste the node's NAME as plain text. -->
+          <Button Content="{Binding CopyNameLabel}"
+                  Command="{Binding CopyNameCommand}"
+                  CommandParameter="{Binding ContextMenuNode}"
+                  Click="OnNodeContextAction"
+                  HorizontalAlignment="Stretch" />
+          <Button Content="{Binding PasteNameLabel}"
+                  Command="{Binding PasteNameCommand}"
+                  CommandParameter="{Binding ContextMenuNode}"
+                  Click="OnNodeContextAction"
+                  HorizontalAlignment="Stretch" />
+          <Border Height="1"
+                  Background="{DynamicResource GpsBorder}"
+                  Margin="0,4" />
+          <Button Content="{Binding DeleteLabel}"
+                  Command="{Binding DeleteCommand}"
+                  CommandParameter="{Binding ContextMenuNode}"
+                  Click="OnNodeContextAction"
+                  HorizontalAlignment="Stretch" />
+        </StackPanel>
+      </Border>
+    </Popup>
   </DockPanel>
 </Window>

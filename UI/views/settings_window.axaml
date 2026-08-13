@@ -1,0 +1,186 @@
+<Window x:Class="Guardian.ProgramStation.UI.Views.SettingsWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding SettingsLabel}"
+        Width="760"
+        Height="600"
+        MinWidth="640"
+        MinHeight="500"
+        WindowStartupLocation="CenterOwner"
+        FlowDirection="{Binding Direction}">
+
+  <Window.Styles>
+    <Style Selector="Button.primary">
+      <Setter Property="BorderBrush" Value="{DynamicResource GpsAccent}" />
+      <Setter Property="Foreground" Value="{DynamicResource GpsAccentText}" />
+    </Style>
+  </Window.Styles>
+
+  <Grid RowDefinitions="Auto,*,Auto">
+    <TextBlock Text="{Binding SettingsLabel}"
+               FontSize="18"
+               FontWeight="Bold"
+               Foreground="{DynamicResource GpsAccentText}"
+               Margin="16,14,16,10" />
+
+    <ScrollViewer Grid.Row="1">
+      <StackPanel Margin="16,0,16,12"
+                  Spacing="16">
+        <Grid ColumnDefinitions="2*,3*"
+              ColumnSpacing="16">
+          <StackPanel Grid.Column="0"
+                      Spacing="16">
+            <Border Background="{DynamicResource GpsElement}"
+                    BorderBrush="{DynamicResource GpsBorder}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="14">
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding LanguageLabel}"
+                           FontSize="15"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource GpsAccentText}" />
+                <ListBox ItemsSource="{Binding LanguageOptions}"
+                         SelectedItem="{Binding SelectedLanguageDisplay, Mode=TwoWay}"
+                         Height="88" />
+              </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource GpsElement}"
+                    BorderBrush="{DynamicResource GpsBorder}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="14">
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding ScheduleLabel}"
+                           FontSize="15"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource GpsAccentText}" />
+                <ListBox ItemsSource="{Binding ScheduleOptions}"
+                         SelectedItem="{Binding ScheduleIntervalDisplay, Mode=TwoWay}"
+                         Height="88" />
+                <CheckBox Content="{Binding AutoIndexLabel}"
+                          IsChecked="{Binding AutoIndexEnabled, Mode=TwoWay}" />
+              </StackPanel>
+            </Border>
+          </StackPanel>
+
+          <Border Grid.Column="1"
+                  Background="{DynamicResource GpsElement}"
+                  BorderBrush="{DynamicResource GpsBorder}"
+                  BorderThickness="1"
+                  CornerRadius="8"
+                  Padding="14">
+            <StackPanel Spacing="10">
+              <TextBlock Text="{Binding FavoriteFoldersLabel}"
+                         FontSize="15"
+                         FontWeight="Bold"
+                         Foreground="{DynamicResource GpsAccentText}" />
+              <ListBox ItemsSource="{Binding FavoriteFolders}"
+                       Height="196">
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <Grid ColumnDefinitions="*,Auto">
+                      <TextBlock Grid.Column="0"
+                                 Text="{Binding}"
+                                 VerticalAlignment="Center"
+                                 TextTrimming="CharacterEllipsis" />
+                      <Button Grid.Column="1"
+                              Content="{Binding $parent[ListBox].DataContext.RemoveFolderLabel}"
+                              Command="{Binding $parent[ListBox].DataContext.RemoveFolderCommand}"
+                              CommandParameter="{Binding}"
+                              Padding="8,2" />
+                    </Grid>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+              <Button Content="{Binding AddFolderLabel}"
+                      Command="{Binding AddFolderCommand}"
+                      CommandParameter="{Binding $parent[Window]}"
+                      HorizontalAlignment="Left" />
+            </StackPanel>
+          </Border>
+        </Grid>
+
+        <Border Background="{DynamicResource GpsElement}"
+                BorderBrush="{DynamicResource GpsBorder}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="14">
+          <StackPanel Spacing="10">
+            <TextBlock Text="{Binding ThemeLabel}"
+                       FontSize="15"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource GpsAccentText}" />
+            <ListBox ItemsSource="{Binding AvailableThemes}"
+                     SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"
+                     Height="96">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                    <Border Width="14"
+                            Height="14"
+                            CornerRadius="3"
+                            BorderThickness="1"
+                            BorderBrush="{DynamicResource GpsBorder}"
+                            VerticalAlignment="Center">
+                      <Border.Background>
+                        <SolidColorBrush Color="{Binding Palette.Background}" />
+                      </Border.Background>
+                    </Border>
+                  </StackPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Spacing="8">
+              <TextBlock Text="{Binding CustomThemeLabel}"
+                         FontSize="13"
+                         FontWeight="Bold"
+                         Opacity="0.9" />
+              <Grid ColumnDefinitions="150,*"
+                    RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                    ColumnSpacing="8"
+                    RowSpacing="6">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding BackgroundLabel}" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding CustomBackground, Mode=TwoWay}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding ElementLabel}" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CustomElement, Mode=TwoWay}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding AdditionalLabel}" VerticalAlignment="Center" />
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding CustomAdditional, Mode=TwoWay}" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding BorderLabel}" VerticalAlignment="Center" />
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding CustomBorder, Mode=TwoWay}" />
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding PrimaryTextLabel}" VerticalAlignment="Center" />
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding CustomPrimaryText, Mode=TwoWay}" />
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="{Binding AccentTextLabel}" VerticalAlignment="Center" />
+                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding CustomAccentText, Mode=TwoWay}" />
+              </Grid>
+              <Button Content="{Binding SaveCustomThemeLabel}"
+                      Command="{Binding SaveCustomThemeCommand}"
+                      HorizontalAlignment="Left" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <Border Grid.Row="2"
+            Background="{DynamicResource GpsElement}"
+            BorderBrush="{DynamicResource GpsBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="16,10">
+      <StackPanel Orientation="Horizontal"
+                  Spacing="8"
+                  HorizontalAlignment="Right">
+        <Button Content="{Binding CancelLabel}"
+                Click="OnCloseClick"
+                Padding="18,7" />
+        <Button Content="{Binding SaveSettingsLabel}"
+                Click="OnSaveClick"
+                Classes="primary"
+                Padding="18,7" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</Window>

@@ -1,0 +1,23 @@
+<Window x:Class="Guardian.ProgramStation.UI.Views.SavePromptWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="440"
+        SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+  <StackPanel Margin="16"
+              Spacing="12">
+    <TextBlock x:Name="MessageText"
+               TextWrapping="Wrap" />
+    <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8">
+      <Button x:Name="CancelButton"
+              Click="OnCancel" />
+      <Button x:Name="DontSaveButton"
+              Click="OnDontSave" />
+      <Button x:Name="SaveButton"
+              Click="OnSave" />
+    </StackPanel>
+  </StackPanel>
+</Window>

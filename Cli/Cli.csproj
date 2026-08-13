@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Guardian.ProgramStation.Cli</RootNamespace>
+    <AssemblyName>guardian-program-station</AssemblyName>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- CLI parsing only. The command implementations live in Application use
+         cases; this project only wires arguments to them and renders output. -->
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta5.25277.114" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kernel\kernel.csproj" />
+  </ItemGroup>
+
+</Project>

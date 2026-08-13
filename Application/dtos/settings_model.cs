@@ -15,4 +15,7 @@ public sealed class SettingsModel
     public DateTime? LastIndexAt { get; set; }
 
     public int LastIndexFoundCount { get; set; }
+
+    /// <summary>The folder the user last saved a tree to; the save dialog opens there next time.</summary>
+    public string? LastSaveFolder { get; set; }
 }

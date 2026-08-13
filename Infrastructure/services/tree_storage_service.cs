@@ -44,7 +44,17 @@ public sealed class TreeStorageService : ITreeService
             return null;
         }
 
-        var json = await File.ReadAllTextAsync(path, cancellationToken).ConfigureAwait(false);
+        return await LoadTreeFromFileAsync(path, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<TreeModel?> LoadTreeFromFileAsync(string filePath, CancellationToken cancellationToken = default)
+    {
+        if (!File.Exists(filePath))
+        {
+            return null;
+        }
+
+        var json = await File.ReadAllTextAsync(filePath, cancellationToken).ConfigureAwait(false);
         return JsonSerializer.Deserialize<TreeModel>(json, _options);
     }
 
@@ -57,6 +67,23 @@ public sealed class TreeStorageService : ITreeService
 
         var json = JsonSerializer.Serialize(tree, _options);
         await File.WriteAllTextAsync(GetFilePath(tree.Id), json, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task SaveTreeToFileAsync(TreeModel tree, string? filePath, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            // No location was chosen (the save dialog was cancelled): write nothing.
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(tree.Id))
+        {
+            tree.Id = Guid.NewGuid().ToString("N");
+        }
+
+        var json = JsonSerializer.Serialize(tree, _options);
+        await File.WriteAllTextAsync(filePath, json, cancellationToken).ConfigureAwait(false);
     }
 
     public Task DeleteTreeAsync(string treeId, CancellationToken cancellationToken = default)
@@ -128,6 +155,16 @@ public sealed class TreeStorageService : ITreeService
     private static void CreateNode(string path, TreeNodeModel node, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
+        if (string.Equals(node.NodeType, "file", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!File.Exists(path))
+            {
+                File.Create(path).Dispose();
+            }
+
+            return;
+        }
 
         Directory.CreateDirectory(path);
 

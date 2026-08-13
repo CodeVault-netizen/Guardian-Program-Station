@@ -19,12 +19,14 @@ public sealed class ImportTreeUseCase
         _storageService = storageService;
     }
 
-    public async Task<ImportTreeResult> ExecuteAsync(string rootPath, CancellationToken cancellationToken = default)
+    public async Task<ImportTreeResult> ExecuteAsync(string rootPath, bool importFoldersOnly = false, CancellationToken cancellationToken = default)
     {
         var tree = await _treeService.ImportTreeAsync(rootPath, cancellationToken).ConfigureAwait(false);
         await _treeService.SaveTreeAsync(tree, cancellationToken).ConfigureAwait(false);
 
-        var addedPrograms = await ImportProgramsAsync(rootPath, cancellationToken).ConfigureAwait(false);
+        var addedPrograms = importFoldersOnly
+            ? 0
+            : await ImportProgramsAsync(rootPath, cancellationToken).ConfigureAwait(false);
 
         return new ImportTreeResult
         {

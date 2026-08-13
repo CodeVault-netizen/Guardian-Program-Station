@@ -44,3 +44,12 @@ Desktop.ini
 
 # Crash reports
 crash.log
+
+# Freebuff desktop tooling (agent workspace state, debug scripts, local DB)
+.freebuff/
+
+# Editor lock files
+.~lock.*
+
+# Personal spreadsheet not part of the project
+Project_Task_Manager.xlsx

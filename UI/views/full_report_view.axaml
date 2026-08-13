@@ -4,85 +4,111 @@
              xmlns:converters="using:Guardian.ProgramStation.UI.Converters">
   <UserControl.Resources>
     <converters:ExecutableTypeToIconConverter x:Key="TypeIcon" />
+    <converters:BoolToBrushConverter x:Key="AlternateRow" />
   </UserControl.Resources>
 
   <DockPanel Margin="16">
-    <StackPanel DockPanel.Dock="Top"
-                Orientation="Horizontal"
-                Spacing="8"
-                Margin="0,0,0,10">
-      <Button Content="{Binding AddLabel}" Command="{Binding AddProgramCommand}" />
-      <Button Content="{Binding EditLabel}" Command="{Binding EditProgramCommand}" />
-      <Button Content="{Binding DeleteLabel}" Command="{Binding DeleteProgramCommand}" />
-      <Button Content="{Binding ExportCsvLabel}" Command="{Binding ExportCsvCommand}" />
-      <Button Content="{Binding ExportJsonLabel}" Command="{Binding ExportJsonCommand}" />
-      <TextBox Width="220"
-               Margin="12,0,0,0"
+    <!-- Top action bar: actions on the left, search + close on the right -->
+    <Grid DockPanel.Dock="Top"
+          ColumnDefinitions="*,Auto,Auto"
+          Margin="0,0,0,10">
+      <StackPanel Grid.Column="0"
+                  Orientation="Horizontal"
+                  Spacing="8">
+        <Button Content="{Binding AddLabel}" Command="{Binding AddProgramCommand}" Padding="12,5" />
+        <Button Content="{Binding EditLabel}" Command="{Binding EditProgramCommand}" Padding="12,5" />
+        <Button Content="{Binding DeleteLabel}" Command="{Binding DeleteProgramCommand}" Padding="12,5" />
+        <Button Content="{Binding ExportCsvLabel}" Command="{Binding ExportCsvCommand}" Padding="12,5" />
+        <Button Content="{Binding ExportJsonLabel}" Command="{Binding ExportJsonCommand}" Padding="12,5" />
+      </StackPanel>
+      <TextBox Grid.Column="1"
+               Width="240"
+               Margin="0,0,8,0"
                Watermark="{Binding SearchPlaceholder}"
                Text="{Binding SearchText, Mode=TwoWay}" />
-    </StackPanel>
+      <Button Grid.Column="2"
+              Content="✕"
+              ToolTip.Tip="{Binding CloseLabel}"
+              Command="{Binding CloseReportsCommand}"
+              Width="32"
+              Height="28"
+              Padding="0"
+              FontSize="13"
+              HorizontalContentAlignment="Center"
+              VerticalContentAlignment="Center" />
+    </Grid>
 
+    <!-- Filter row: All + sort + visible diagnostics -->
     <StackPanel DockPanel.Dock="Top"
                 Orientation="Horizontal"
                 Spacing="6"
                 Margin="0,0,0,10">
-      <TextBlock Text="{Binding TypeColumn}" VerticalAlignment="Center" Margin="0,0,4,0" />
       <Button Content="{Binding AllLabel}" Command="{Binding SetTypeFilterCommand}" CommandParameter="{x:Null}" Padding="10,3" />
-      <Button Content="{Binding WindowsLabel}" Command="{Binding SetTypeFilterCommand}" CommandParameter="Windows" Padding="10,3" />
-      <Button Content="{Binding LinuxLabel}" Command="{Binding SetTypeFilterCommand}" CommandParameter="Linux" Padding="10,3" />
-      <Button Content="{Binding MacOsLabel}" Command="{Binding SetTypeFilterCommand}" CommandParameter="MacOS" Padding="10,3" />
       <Button Content="{Binding SortIndicator}" Command="{Binding ToggleSortCommand}" Margin="12,0,0,0" Padding="10,3" />
+      <TextBlock Text="{Binding GroupsCount, StringFormat='Groups: {0}'}"
+                 VerticalAlignment="Center"
+                 Margin="16,0,0,0"
+                 Opacity="0.8" />
     </StackPanel>
 
-    <Grid DockPanel.Dock="Top"
-          ColumnDefinitions="Auto,*,*,2*,*,*,2*"
-          Margin="6,0,6,4">
-      <TextBlock Grid.Column="1" Text="{Binding NameColumn}" FontWeight="Bold" />
-      <TextBlock Grid.Column="2" Text="{Binding VersionColumn}" FontWeight="Bold" Margin="6,0,0,0" />
-      <TextBlock Grid.Column="3" Text="{Binding PathColumn}" FontWeight="Bold" Margin="6,0,0,0" />
-      <TextBlock Grid.Column="4" Text="{Binding LinkColumn}" FontWeight="Bold" Margin="6,0,0,0" />
-      <TextBlock Grid.Column="5" Text="{Binding LicenseColumn}" FontWeight="Bold" Margin="6,0,0,0" />
-      <TextBlock Grid.Column="6" Text="{Binding NotesColumn}" FontWeight="Bold" Margin="6,0,0,0" />
-    </Grid>
+    <!-- Column headers -->
+    <Border DockPanel.Dock="Top"
+            Background="{DynamicResource GpsAdditional}"
+            CornerRadius="4"
+            Margin="0,0,0,4">
+      <Grid ColumnDefinitions="Auto,2*,*,3*,*,*,2*"
+            Margin="10,6">
+        <TextBlock Grid.Column="1" Text="{Binding NameColumn}" FontWeight="Bold" />
+        <TextBlock Grid.Column="2" Text="{Binding VersionColumn}" FontWeight="Bold" Margin="6,0,0,0" />
+        <TextBlock Grid.Column="3" Text="{Binding PathColumn}" FontWeight="Bold" Margin="6,0,0,0" />
+        <TextBlock Grid.Column="4" Text="{Binding LinkColumn}" FontWeight="Bold" Margin="6,0,0,0" />
+        <TextBlock Grid.Column="5" Text="{Binding LicenseColumn}" FontWeight="Bold" Margin="6,0,0,0" />
+        <TextBlock Grid.Column="6" Text="{Binding NotesColumn}" FontWeight="Bold" Margin="6,0,0,0" />
+      </Grid>
+    </Border>
 
+    <!-- Flat program list (simple, guaranteed rendering) -->
     <ListBox ItemsSource="{Binding Programs}"
-             SelectedItem="{Binding SelectedProgram, Mode=TwoWay}">
+             Background="Transparent"
+             BorderThickness="0">
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <Grid ColumnDefinitions="Auto,*,*,2*,*,*,2*">
+          <Grid ColumnDefinitions="Auto,2*,*,3*,*,*,2*"
+                Background="{Binding IsAlternate, Converter={StaticResource AlternateRow}}">
             <TextBlock Grid.Column="0"
                        Text="{Binding ExecutableType, Converter={StaticResource TypeIcon}}"
                        Foreground="{DynamicResource GpsAccentText}"
                        VerticalAlignment="Center"
-                       Margin="0,0,6,0" />
+                       Margin="10,4,6,4" />
             <TextBlock Grid.Column="1"
                        Text="{Binding Name}"
                        VerticalAlignment="Center"
+                       Margin="6,4"
                        TextTrimming="CharacterEllipsis" />
             <TextBlock Grid.Column="2"
                        Text="{Binding Version}"
                        VerticalAlignment="Center"
-                       Margin="6,0,0,0"
+                       Margin="6,4"
                        TextTrimming="CharacterEllipsis" />
             <TextBlock Grid.Column="3"
                        Text="{Binding Path}"
                        VerticalAlignment="Center"
-                       Margin="6,0,0,0"
+                       Margin="6,4"
                        TextTrimming="CharacterEllipsis" />
             <TextBlock Grid.Column="4"
                        Text="{Binding Link}"
                        VerticalAlignment="Center"
-                       Margin="6,0,0,0"
+                       Margin="6,4"
                        TextTrimming="CharacterEllipsis" />
             <TextBlock Grid.Column="5"
                        Text="{Binding License}"
                        VerticalAlignment="Center"
-                       Margin="6,0,0,0"
+                       Margin="6,4"
                        TextTrimming="CharacterEllipsis" />
             <TextBlock Grid.Column="6"
                        Text="{Binding Notes}"
                        VerticalAlignment="Center"
-                       Margin="6,0,0,0"
+                       Margin="6,4"
                        TextTrimming="CharacterEllipsis" />
           </Grid>
         </DataTemplate>

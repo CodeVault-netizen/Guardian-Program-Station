@@ -8,17 +8,24 @@ using Guardian.ProgramStation.UI.Views;
 
 namespace Guardian.ProgramStation.UI.ViewModels;
 
+/// <summary>Result of the new-tree dialog: the saved tree plus the location the user chose.</summary>
+public sealed record TreeEditorResult(TreeModel Tree, string? SavePath);
+
 public sealed class TreeEditorViewModel : ObservableObject, ITreeNodeHost
 {
     private readonly ITreeService _treeService;
     private readonly ILocalizationService _localization;
+    private readonly TreeNodeClipboardController _clipboardController;
     private string _treeName = string.Empty;
     private TreeNodeViewModel? _selectedNode;
+    private TreeNodeViewModel? _contextMenuNode;
+    private bool _isNodeContextMenuOpen;
 
-    public TreeEditorViewModel(ITreeService treeService, ILocalizationService localization)
+    public TreeEditorViewModel(ITreeService treeService, ILocalizationService localization, IClipboardService clipboard)
     {
         _treeService = treeService;
         _localization = localization;
+        _clipboardController = new TreeNodeClipboardController(this, clipboard);
 
         RemoveNodeCommand = new RelayCommand(parameter => RemoveNode(parameter as TreeNodeViewModel));
         AddSubfolderCommand = new AsyncRelayCommand(async owner => await AddSubfolderAsync(owner));
@@ -29,14 +36,50 @@ public sealed class TreeEditorViewModel : ObservableObject, ITreeNodeHost
 
     public ICommand RemoveNodeCommand { get; }
 
+    public ICommand CopyCommand => _clipboardController.CopyCommand;
+
+    public ICommand CutCommand => _clipboardController.CutCommand;
+
+    public ICommand PasteCommand => _clipboardController.PasteCommand;
+
+    public ICommand DeleteCommand => _clipboardController.DeleteCommand;
+
+    public ICommand CopyNameCommand => _clipboardController.CopyNameCommand;
+
+    public ICommand PasteNameCommand => _clipboardController.PasteNameCommand;
+
     public ICommand AddSubfolderCommand { get; }
 
     public ICommand AddRootCommand { get; }
+
+    public void OnTreeChanged()
+    {
+        // The new-tree editor has no preview panel; nothing to refresh.
+    }
 
     public TreeNodeViewModel? SelectedNode
     {
         get => _selectedNode;
         set => SetProperty(ref _selectedNode, value);
+    }
+
+    /// <summary>The node the right-click context menu is attached to.</summary>
+    public TreeNodeViewModel? ContextMenuNode
+    {
+        get => _contextMenuNode;
+        set => SetProperty(ref _contextMenuNode, value);
+    }
+
+    public bool IsNodeContextMenuOpen
+    {
+        get => _isNodeContextMenuOpen;
+        set => SetProperty(ref _isNodeContextMenuOpen, value);
+    }
+
+    public void OpenNodeContextMenu(TreeNodeViewModel node)
+    {
+        ContextMenuNode = node;
+        IsNodeContextMenuOpen = true;
     }
 
     public bool Saved { get; private set; }
@@ -58,6 +101,20 @@ public sealed class TreeEditorViewModel : ObservableObject, ITreeNodeHost
     public string AddLabel => _localization["Add"];
 
     public string RemoveLabel => _localization["Remove"];
+
+    public string RenameLabel => _localization["Rename"];
+
+    public string CopyLabel => _localization["Copy"];
+
+    public string CutLabel => _localization["Cut"];
+
+    public string PasteLabel => _localization["Paste"];
+
+    public string DeleteLabel => _localization["Delete"];
+
+    public string CopyNameLabel => _localization["CopyName"];
+
+    public string PasteNameLabel => _localization["PasteName"];
 
     public string SaveText => _localization["Save"];
 
@@ -128,7 +185,7 @@ public sealed class TreeEditorViewModel : ObservableObject, ITreeNodeHost
         return confirmed ? dialog.Result : null;
     }
 
-    public async Task SaveAsync()
+    public async Task<TreeModel> SaveAsync(string? targetPath)
     {
         var tree = new TreeModel
         {
@@ -136,8 +193,13 @@ public sealed class TreeEditorViewModel : ObservableObject, ITreeNodeHost
             Nodes = ToModels(RootNodes),
         };
 
+        // Working copy inside the program (appears in the Saved Trees list)…
         await _treeService.SaveTreeAsync(tree);
+        // …and the copy at the location the user chose.
+        await _treeService.SaveTreeToFileAsync(tree, targetPath);
+
         Saved = true;
+        return tree;
     }
 
     private void RemoveNode(TreeNodeViewModel? node)
@@ -164,6 +226,7 @@ public sealed class TreeEditorViewModel : ObservableObject, ITreeNodeHost
         => nodes.Select(node => new TreeNodeModel
         {
             Name = node.Name,
+            CreatedAt = node.CreatedAt,
             Children = ToModels(node.Children),
         }).ToList();
 }
