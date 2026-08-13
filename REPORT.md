@@ -99,6 +99,47 @@ Cli/bin/Debug/net10.0/guardian-program-station --help
 
 ---
 
+## 🚀 GitHub Actions — Cross-Platform CI (2026-08-13)
+
+Workflow: **Cross-Platform CI** (`.github/workflows/ci.yml`) — matrix على
+`windows-latest` / `ubuntu-latest` / `macos-latest`، مع `fail-fast: false`
+لكي يُبلّغ كل نظام مستقلاً.
+
+Run: https://github.com/CodeVault-netizen/Guardian-Program-Station/actions/runs/31704171467 — **SUCCESS** ✅
+
+كل نظام نفّذ فعلياً: Restore → Build Release كامل الحل → كل الاختبارات →
+`ci/verify-cli.sh` الذي يشغّل **الـ CLI الحقيقي** (37 فحصاً: help/version،
+create مع فحص filesystem حقيقي، preview مع أسماء العقد وUTF-8، validate
+Valid/Invalid، template create/list/export/import/delete، Exit Codes
+0/2/3/4، وأسماء عربية/صينية/يابانية دون أحرف استبدال).
+
+| المنصة | Build | Tests | CLI (37 فحصاً) | create | preview | validate | template | UTF-8 | filesystem |
+|---|---|---|---|---|---|---|---|---|---|
+| **Windows** | ✅ PASS | ✅ PASS (TRX مرفوع) | ✅ PASS | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Ubuntu Linux** | ✅ PASS | ✅ PASS (TRX مرفوع) | ✅ PASS | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **macOS** | ✅ PASS | ✅ PASS (TRX مرفوع) | ✅ PASS | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+> ملاحظة: سحب السجلات/المصنوعات (logs/artifacts) يتطلب مصادقة GitHub؛
+> النتائج أعلاه من GitHub API الرسمي (حالة كل خطوة success). راجع
+> صفحة الـ Run أعلاه لعرض السجلات الكاملة من حسابك.
+
+**تحديث توافق المنصات (بعد الاختبار الفعلي):**
+```
+Windows: Tested ✅ (Build/Tests/CLI كلها PASS على runner حقيقي)
+Linux:   Tested ✅ (Build/Tests/CLI كلها PASS على ubuntu-latest)
+macOS:   Tested ✅ (Build/Tests/CLI كلها PASS على macos-latest)
+```
+
+الملفات المضافة لهذه المرحلة (CI فقط — لم يُعدَّل أي كود):
+- `.github/workflows/ci.yml`
+- `ci/verify-cli.sh`
+- `ci/test-trees/{valid,invalid,utf8,file-node}.json`
+- `.gitattributes` (LF إلزامي للسكربتات وبيانات الاختبار)
+
+Commit: `cc5c0a6` — "Add cross-platform CI workflow that verifies the CLI on Windows, Linux and macOS"
+
+---
+
 ## ✅ الإصلاحات السابقة (ملخّص)
 - **Copy Name / Paste Name**: يلصق الاسم النصي فقط (يستخرج `Name` من JSON العقدة إذا كانت الحافظة تحمله) — Copy Node / Paste Node لم يتغيّرا.
 - **زر الفأرة الأيمن** في قائمة العقدة: Copy / Cut / Paste / Copy Name / Paste Name / Delete تعمل.
